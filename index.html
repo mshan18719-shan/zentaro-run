@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Mad Boy Adventure</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="shortcut icon" href="assets/icon-256.png" type="image/x-icon">
+</head>
+
+<body>
+    <canvas id="gameCanvas"></canvas>
+
+
+    <!-- ? Background -->
+    <img id="bg" src="assets/tiledbackground.png" hidden>
+
+    <!-- ? Clouds -->
+    <img id="cloudSheet0" src="assets/cloud-sheet0.png" hidden>
+
+    <!-- ? Main Screen Images -->
+    <img id="mainScreen" src="assets/splashscreen-sheet0.png" hidden>
+    <img id="mainPlayBtn" src="assets/startbtn-sheet0.png" hidden>
+
+    <!-- todo: Selecting Level Images -->
+    <img id="levelSelectScreen" src="assets/levelselect-sheet0.png" hidden>
+    <img id="levelSheet0" src="assets/level-sheet0.png" hidden>
+    <img id="levelSheet1" src="assets/level-sheet1.png" hidden>
+
+    <!-- * Player spritesheets -->
+    <img id="heroSheet0" src="assets/hero-sheet0.png" hidden>
+    <img id="heroSheet1" src="assets/hero-sheet1.png" hidden>
+
+    <!--  * Enemy spritesheets -->
+    <img id="slimeSheet0" src="assets/slime-sheet1.png" hidden>
+    <img id="madgreenSheet0" src="assets/madgreen-sheet0.png" hidden>
+    <img id="madblockSheet0" src="assets/madblock-sheet0.png" hidden>
+    <img id="flySheet0" src="assets/fly-sheet0.png" hidden>
+
+    <!-- * Coins -->
+    <img id="coinsSheet0" src="assets/spritesheet.png" hidden>
+    <img id="coinsSheet1" src="assets/coins-sheet1.png" hidden>
+    <img id="coinsSheet2" src="assets/coins2-sheet0.png" hidden>
+
+    <!-- * Stars -->
+    <img id="starSheet" src="assets/star-sheet0.png" hidden>
+
+    <!-- * Explosion Spritesheets -->
+    <img id="explosionImg0" src="assets/explosion-sheet0.png" hidden>
+    <img id="explosionImg1" src="assets/explosion-sheet1.png" hidden>
+
+
+    <!-- ! HUD -->
+    <img id="pausePanel" src="assets/pausepanel-sheet0.png" hidden>
+    <img id="livesSheet0" src="assets/lives-sheet0.png" hidden>
+    <img id="volumeBtn0" src="assets/volumebtn-sheet0.png" hidden>
+    <img id="volumeBtn1" src="assets/volumebtn-sheet1.png" hidden>
+
+    <!-- ! Buttons Collection -->
+    <img id="menuBtn" src="assets/menubtn-sheet0.png" hidden>
+    <img id="restartBtn" src="assets/restartbtn-sheet0.png" hidden>
+    <img id="playBtn" src="assets/playbtn-sheet0.png" hidden>
+    <img id="pauseBtn" src="assets/pausebtn-sheet0.png" hidden>
+    <img id="nextBtn" src="assets/nextbtn-sheet0.png" hidden>
+
+    <!-- TODO: Level Cleared -->
+    <img id="levelClear" src="assets/levelcleared-sheet0.png" hidden>
+    <img id="emptyStar" src="assets/startaken-sheet1.png" hidden>
+    <img id="shiningStar" src="assets/startaken-sheet0.png" hidden>
+    <img id="facebook" src="assets/shareonfacebook-sheet0.png" hidden>
+
+    <!-- TODO: Game Over -->
+    <img id="gameOver" src="assets/gameoverpanel-sheet0.png" hidden>
+    <img id="gameStop" src="assets/gameoverstop-sheet0.png" hidden>
+    <img id="gameContinue" src="assets/gameovercont-sheet0.png" hidden>
+
+    <!-- ! On-screen virtual controls -->
+    <img id="ctrlLeft" src="assets/moveleft-sheet0.png" hidden>
+    <img id="ctrlRight" src="assets/moveright-sheet0.png" hidden>
+    <img id="ctrlJump" src="assets/jump-sheet0.png" hidden>
+
+    <!-- ! Used / exhausted treasure box (appears after all 3 hits) -->
+    <img id="boxUsed" src="assets/boxitem-sheet1.png" hidden>
+
+    <img id="metalBob" src="assets/metalblocks-sheet0.png" hidden>
+    <img id="movingBridge" src="assets/movbridge-sheet0.png" hidden>
+
+    <!-- ! Tile images -->
+    <img id="block1" src="assets/groundgrass.png" hidden>
+    <img id="block2" src="assets/water.png" hidden>
+    <img id="block3" src="assets/watertop.png" hidden>
+    <img id="block4" src="assets/doormid-sheet0.png" hidden>
+    <img id="block5" src="assets/topdoor-sheet0.png" hidden>
+    <img id="block6" src="assets/cactus-sheet0.png" hidden>
+    <img id="block7" src="assets/bigcactus-sheet0.png" hidden>
+    <img id="block8" src="assets/ground.png" hidden>
+    <img id="block9" src="assets/rock-sheet0.png" hidden>
+    <img id="block10" src="assets/mushroom-sheet0.png" hidden>
+    <img id="block11" src="assets/mushroom1-sheet0.png" hidden>
+    <img id="block12" src="assets/tutsign-sheet0.png" hidden>
+    <img id="block13" src="assets/crystalplants-sheet0.png" hidden>
+    <img id="block14" src="assets/boxitem-sheet0.png" hidden>
+    <img id="block15" src="assets/spikes-sheet0.png" hidden>
+    <img id="block16" src="assets/grass-sheet0.png" hidden>
+    <img id="block17" src="assets/fence-sheet0.png" hidden>
+    <img id="block18" src="assets/fence-sheet1.png" hidden>
+    <img id="block19" src="assets/topdoor-sheet1.png" hidden>
+    <img id="block20" src="assets/doormid-sheet1.png" hidden>
+
+    <img id="block21" src="assets/topground-sheet0.png" hidden>
+    <img id="block22" src="assets/topground-sheet2.png" hidden>
+    <img id="block23" src="assets/topground-sheet1.png" hidden>
+
+    <img id="block24" src="assets/exitsign-sheet0.png" hidden>
+    <img id="block25" src="assets/blackhole-sheet0.png" hidden>
+
+    <script type="module" src="js/main.js"></script>
+</body>
+
+</html>
