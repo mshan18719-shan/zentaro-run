@@ -288,10 +288,22 @@ export class LevelSelectScene {
         const topClearance = vh * 0.10;   // room for back button
         const availH = vh - groundStripH - topClearance;
 
-        // Width: up to 88% of vw, never wider than 1050px
-        const panelW = Math.min(vw * 0.88, 1050);
-        // Height: up to available space, never taller than 480px
-        const panelH = Math.min(availH * 0.92, 480);
+        // Scale factor relative to reference 960x540 so panel shrinks
+        // proportionally on mobile without affecting desktop layout.
+        const panelScale = Math.min(vw / 960, vh / 540, 1);
+
+        // Extra shrink on small screens (mobile): reduce panel to ~75% on
+        // phones (actual screen width ≤ 480px) and ~88% on small tablets
+        // (≤ 768px).  Desktop/laptop screens are unaffected (multiplier = 1).
+        const actualW = window.innerWidth;
+        const mobileScale = actualW <= 480 ? 0.75
+                          : actualW <= 768 ? 0.75
+                          : 1;
+
+        // Width: up to 88% of vw, never wider than 1050px (scaled on mobile)
+        const panelW = Math.min(vw * 0.88, 1050 * panelScale) * mobileScale;
+        // Height: up to 92% of available space, never taller than 480px (scaled)
+        const panelH = Math.min(availH * 0.92, 480 * panelScale) * mobileScale;
 
         const panelX = (vw - panelW) / 2;
         // Centre panel in the available space
