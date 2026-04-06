@@ -515,7 +515,7 @@ export class HUD {
         const totalW = btnD * 2 + gap;
         const bx0    = (viewW - totalW) / 2;
         // Place buttons in the lower ~60% of the panel
-        const by     = py + PH * 0.62;
+        const by     = py + PH * 0.80;
 
         const btnDefs = [
             { img: this.stopGame,     rect: "_gameOverMenuBtn",    label: "☰" },
@@ -689,7 +689,7 @@ export class HUD {
         const btnGap = Math.round(btnD * 0.3);
         const totalBtnW = btnD * 3 + btnGap * 2;
         const bx0 = (viewW - totalBtnW) / 2;
-        const by  = py + PH - btnD - Math.round(PH * 0.03);
+        const by  = py + PH - btnD - Math.round(PH * -0.05);
 
         const btnDefs = [
             { rect: "_lcMenuBtn",    img: this.menuImg    },

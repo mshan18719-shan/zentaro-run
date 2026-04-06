@@ -469,7 +469,7 @@ export class PatrolEnemy extends Enemy {
 
         this.renderW      = 70;
         this.renderH      = 74;
-        this.visualYOffset= 0;
+        this.visualYOffset= -8;
         this.width        = 44;
         this.height       = 48;
         this.y            = startY - this.height;

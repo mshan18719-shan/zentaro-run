@@ -70,6 +70,12 @@ export class LevelSelectScene {
 
         this._map = createMap();
         this._decorEnemies = null;
+
+        // Reset enemies when viewport changes (rotation, resize) so
+        // _initDecorEnemies recalculates positions for the new svw/svh.
+        window.addEventListener("resize", () => {
+            this._decorEnemies = null;
+        });
     }
 
     // ── Build decorative enemies once we know viewport size ───
@@ -102,7 +108,9 @@ export class LevelSelectScene {
             { speed: 1, patrolLeft: patrolCentreX - patrolRange, patrolRight: patrolCentreX + patrolRange }
         );
 
-        this._enemyGroundScreenY = stripTop + tdH + 66;
+        // NOTE: _enemyGroundScreenY is NOT cached here because svh/stripTop
+        // changes across devices and on resize.  It is recomputed each frame
+        // in _drawDecorEnemies so enemies always sit on the visible ground.
         this._enemyFakeMapBaseY = (fakeRows - 1) * TILE;
 
         const gfyJ = this._enemyFakeMapBaseY - this._jumper.height;
@@ -184,7 +192,22 @@ export class LevelSelectScene {
 
     _drawDecorEnemies(ctx, vw, vh) {
         if (!this._decorEnemies) return;
-        const fakeCamera = { x: 0, y: this._enemyFakeMapBaseY - this._enemyGroundScreenY };
+
+        // Recompute ground position every frame so it stays correct on all
+        // screen sizes and after resize — mirrors _drawGroundStrip exactly.
+        const stripH       = Math.round(vh * 0.22);
+        const stripTop     = vh - stripH;
+        const scale        = stripH / (3 * TILE);
+        const tdH          = TILE * scale;
+
+        // enemyGroundScreenY = Y coordinate (in virtual/world space) where
+        // the top of the solid ground surface is — enemies should stand here.
+        // stripTop + tdH is the bottom edge of the top ground tile, which is
+        // the standing surface.  The small nudge (4 * scale) fine-tunes the
+        // visual so feet touch the grass sprite consistently on every device.
+        const enemyGroundScreenY = stripTop + tdH + 66 * scale;
+
+        const fakeCamera = { x: 0, y: this._enemyFakeMapBaseY - enemyGroundScreenY };
         this._decorEnemies.forEach(e => e.draw(ctx, fakeCamera));
     }
 
