@@ -25,8 +25,8 @@
 // ─────────────────────────────────────────────────────────────
 //  Tuneable constants  (edit these to resize / retime things)
 // ─────────────────────────────────────────────────────────────
-export const BRIDGE_W = 130;   // px — rendered width  of the bridge sprite
-export const BRIDGE_H = 36;   // px — rendered height of the bridge sprite
+export const BRIDGE_W = 150;   // px — rendered width  of the bridge sprite
+export const BRIDGE_H = 40;   // px — rendered height of the bridge sprite
 export const METALBOB_SIZE = 170;   // px — rendered size   of the metal bob (square)
 
 // Water animation
@@ -211,16 +211,20 @@ export class MovingBridge {
         const fromAbove = (player.velY ?? 0) >= -0.5;   // allow tiny negative for carry
 
         if (withinSnap && fromAbove) {
-            // Snap feet flush to bridge surface (no gap)
-            player.y = bTop - player.height;
-            // Carry horizontally with the bridge
+            // Snap feet flush to bridge surface — always, including downward travel.
+            // This is the key fix: we snap AFTER any deltaY carry so there is
+            // never a gap between the player's feet and the bridge top.
             player.x += this._deltaX;
-            // If bridge moves down, push player down too; never push up (that's jumping)
-            if (this._deltaY > 0) player.y += this._deltaY;
+            player.y  = bTop - player.height;   // pixel-perfect flush snap every frame
+
             // Keep player grounded so jumping still works
+            player.velY    = 0;
             player.onGround = true;
-            player.velY = 0;
             player.jumpsLeft = 2;
+
+            // Tell the player they are on a bridge so animation stays in
+            // idle/run mode and never switches to the falling sprite.
+            player.onBridge = true;
         }
     }
 
@@ -403,6 +407,7 @@ export function createPlatformsLevel1(TILE) {
             // Over the water pit at cols 101-104, row 11 area
             // new MovingBridge(99  * TILE, 10 * TILE, { axis: "x", range: 3 * TILE, speed: 1.4 }),
             // Between the two raised platforms at cols 64-76, row 7
+            new MovingBridge(8 * TILE, 11 * TILE, { axis: "x", range: 4 * TILE, speed: 1.8, startOffset: 0.4 }),
             // new MovingBridge(68  * TILE,  6 * TILE, { axis: "x", range: 3 * TILE, speed: 1.6, startOffset: 0.5 }),
             // Vertical bob-platform near the tall wall (col 119)
             new MovingBridge(88 * TILE, 8 * TILE, { axis: "y", range: 5 * TILE, speed: 1.2, startOffset: 0.3 }),
