@@ -34,6 +34,7 @@ export class HUD {
         this.playImg   = document.getElementById("playBtn");
         this.volOnImg  = document.getElementById("volumeBtn0");
         this.volOffImg = document.getElementById("volumeBtn1");
+        this.screenBtn = document.getElementById("screenBtn");
 
         // Pause-panel assets
         this.pausePanel = document.getElementById("pausePanel");
@@ -85,13 +86,49 @@ export class HUD {
         this.onNextLevel = null;
 
         // Hit-rects (updated every draw)
-        this.soundBtn = { x: 0, y: 0, w: 52, h: 52 };
-        this.pauseBtn = { x: 0, y: 0, w: 52, h: 52 };
+        this.soundBtn     = { x: 0, y: 0, w: 52, h: 52 };
+        this.pauseBtn     = { x: 0, y: 0, w: 52, h: 52 };
+        this.screenBtnRect = { x: 0, y: 0, w: 52, h: 52 };
+
+        // Fullscreen state
+        this.isFullscreen = false;
+        this._onFSChange  = () => {
+            this.isFullscreen = !!(
+                document.fullscreenElement       ||
+                document.webkitFullscreenElement ||
+                document.mozFullScreenElement    ||
+                document.msFullscreenElement
+            );
+        };
+        document.addEventListener("fullscreenchange",       this._onFSChange);
+        document.addEventListener("webkitfullscreenchange", this._onFSChange);
+        document.addEventListener("mozfullscreenchange",    this._onFSChange);
+        document.addEventListener("MSFullscreenChange",     this._onFSChange);
 
         // Pause-panel inner buttons
         this._panelPlayBtn    = { x: 0, y: 0, w: 0, h: 0 };
         this._panelRestartBtn = { x: 0, y: 0, w: 0, h: 0 };
         this._panelMenuBtn    = { x: 0, y: 0, w: 0, h: 0 };
+    }
+
+    // ── Toggle fullscreen ─────────────────────────────────────────────────
+    _toggleFullscreen() {
+        const el = document.documentElement;
+        if (!this.isFullscreen) {
+            // Enter fullscreen — try vendor-prefixed versions for broad support
+            const req = el.requestFullscreen       ||
+                        el.webkitRequestFullscreen  ||
+                        el.mozRequestFullScreen     ||
+                        el.msRequestFullscreen;
+            if (req) req.call(el);
+        } else {
+            // Exit fullscreen
+            const exit = document.exitFullscreen       ||
+                         document.webkitExitFullscreen  ||
+                         document.mozCancelFullScreen   ||
+                         document.msExitFullscreen;
+            if (exit) exit.call(document);
+        }
     }
 
     // ── Toggle pause ─────────────────────────────────────────────────────
@@ -174,6 +211,12 @@ export class HUD {
                 if (this.onMenu) this.onMenu(); return "menu";
             }
             return null;
+        }
+
+        // Fullscreen button (always works)
+        if (this._inRect(mx, my, this.screenBtnRect)) {
+            this._toggleFullscreen();
+            return "fullscreen";
         }
 
         // Pause button (top-right)
@@ -378,6 +421,61 @@ export class HUD {
                 ctx.stroke();
                 ctx.restore();
             }
+        }
+
+        // ── Screen (fullscreen) button — third from right ──────────────
+        const screenX = viewW - topMargin - topBtnSize * 3 - Math.round(12 * hudScale) * 2;
+        this.screenBtnRect = { x: screenX, y: topBtnY, w: topBtnSize, h: topBtnSize };
+
+        // this._drawCircleBtn(ctx,
+        //     screenX + topBtnSize / 2, topBtnY + topBtnSize / 2,
+        //     topBtnSize / 2 + 2, "rgba(0,0,0,0.18)");
+
+        if (this.screenBtn && this.screenBtn.complete && this.screenBtn.naturalWidth) {
+            // Spritesheet: 2 columns side-by-side, each is a square frame.
+            // Col 0 (left)  = "enter fullscreen" — shown in normal mode.
+            // Col 1 (right) = "exit fullscreen"  — shown in fullscreen mode.
+            const frameW = Math.floor(this.screenBtn.naturalWidth / 2);
+            const frameH = this.screenBtn.naturalHeight;
+            const srcCol = this.isFullscreen ? 0 : 1;
+            ctx.drawImage(
+                this.screenBtn,
+                srcCol * frameW, 0, frameW, frameH,
+                screenX, topBtnY, topBtnSize, topBtnSize
+            );
+        } else {
+            // Fallback: draw a simple expand/compress icon
+            this._drawCircleBtn(ctx,
+                screenX + topBtnSize / 2, topBtnY + topBtnSize / 2,
+                topBtnSize / 2, "#27ae60");
+            ctx.save();
+            ctx.strokeStyle = "#fff";
+            ctx.lineWidth   = 2.5;
+            const sc = topBtnSize / 52;
+            const pad = 13 * sc;
+            const mid = topBtnSize / 2;
+            if (!this.isFullscreen) {
+                // Expand arrows (pointing outward to corners)
+                ctx.beginPath();
+                ctx.moveTo(screenX + pad, topBtnY + pad + 8 * sc);
+                ctx.lineTo(screenX + pad, topBtnY + pad);
+                ctx.lineTo(screenX + pad + 8 * sc, topBtnY + pad);
+                ctx.moveTo(screenX + topBtnSize - pad, topBtnY + topBtnSize - pad - 8 * sc);
+                ctx.lineTo(screenX + topBtnSize - pad, topBtnY + topBtnSize - pad);
+                ctx.lineTo(screenX + topBtnSize - pad - 8 * sc, topBtnY + topBtnSize - pad);
+                ctx.stroke();
+            } else {
+                // Compress arrows (pointing inward)
+                ctx.beginPath();
+                ctx.moveTo(screenX + pad + 8 * sc, topBtnY + pad);
+                ctx.lineTo(screenX + pad, topBtnY + pad);
+                ctx.lineTo(screenX + pad, topBtnY + pad + 8 * sc);
+                ctx.moveTo(screenX + topBtnSize - pad - 8 * sc, topBtnY + topBtnSize - pad);
+                ctx.lineTo(screenX + topBtnSize - pad, topBtnY + topBtnSize - pad);
+                ctx.lineTo(screenX + topBtnSize - pad, topBtnY + topBtnSize - pad - 8 * sc);
+                ctx.stroke();
+            }
+            ctx.restore();
         }
 
         // ── Pause / Game-Over / Level-Cleared panels ───────────────────
