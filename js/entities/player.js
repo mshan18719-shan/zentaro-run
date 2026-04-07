@@ -11,7 +11,7 @@ import { isKeyDown } from "../core/input.js";
 import { isSolid, isHazard } from "../world/map.js";
 
 const SPRITE_W       = 80;
-const SPRITE_H       = 130;
+const SPRITE_H       = 128;
 const MAX_AIR_JUMPS  = 2;
 const RUN_ANIM_SPEED = 7;
 const IDLE_ANIM_SPEED= 50;
@@ -26,7 +26,7 @@ const FRAMES = {
     ],
     idle: [
         { sheet: "walk", sx:   0, sy: 104, sw: 65, sh: 100, ox: 0, oy: 0 },
-        { sheet: "walk", sx: 130, sy:  96, sw: 65, sh: 100, ox: 0, oy: 0 },
+        { sheet: "walk", sx: 130, sy:  98, sw: 65, sh: 100, ox: 0, oy: 3 },
     ],
 };
 

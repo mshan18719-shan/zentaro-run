@@ -196,7 +196,7 @@ export class LevelSelectScene {
         // Recompute ground position every frame so it stays correct on all
         // screen sizes and after resize — mirrors _drawGroundStrip exactly.
         const stripH       = Math.round(vh * 0.22);
-        const stripTop     = vh - stripH;
+        const stripTop     = vh - stripH - Math.round(vh * 0.04);
         const scale        = stripH / (3 * TILE);
         const tdH          = TILE * scale;
 
@@ -222,7 +222,9 @@ export class LevelSelectScene {
         const mapCols = map[0].length;
         const mapRows = map.length;
         const stripH = Math.round(vh * 0.22);
-        const stripTop = vh - stripH;
+        // Push the strip up by 4% of vh so it stays fully visible on
+        // mobile screens where bottom chrome can clip the canvas edge.
+        const stripTop = vh - stripH - Math.round(vh * 0.04);
         const firstRow = mapRows - 3;
         const visRows = 3;
         const scale = stripH / (visRows * TILE);
@@ -252,7 +254,7 @@ export class LevelSelectScene {
 
     _drawGroundDecorations(ctx, vw, vh) {
         const stripH = Math.round(vh * 0.22);
-        const stripTop = vh - stripH;
+        const stripTop = vh - stripH - Math.round(vh * 0.04);
         const scale = stripH / (3 * TILE);
         const tdW = TILE * scale;
         const tdH = TILE * scale;
@@ -281,27 +283,27 @@ export class LevelSelectScene {
 
     // ── Panel ─────────────────────────────────────────────────
     _drawPanel(ctx, vw, vh) {
-        // Ground strip occupies bottom 22% of vh.
+        // Ground strip occupies bottom 22% of vh + 4% offset nudge.
         // Back button occupies top ~8%.
         // Panel lives in the middle space.
-        const groundStripH = vh * 0.22;
-        const topClearance = vh * 0.10;   // room for back button
+        const groundStripH = vh * 0.22 + vh * 0.04;   // matches _drawGroundStrip offset
+        const topClearance = vh * 0.10;                // room for back button
         const availH = vh - groundStripH - topClearance;
 
         // Scale factor relative to reference 960x540 so panel shrinks
         // proportionally on mobile without affecting desktop layout.
         const panelScale = Math.min(vw / 960, vh / 540, 1);
 
-        // Extra shrink on small screens (mobile): reduce panel to ~75% on
-        // phones (actual screen width ≤ 480px) and ~88% on small tablets
-        // (≤ 768px).  Desktop/laptop screens are unaffected (multiplier = 1).
+        // Extra shrink on small screens (mobile): reduce panel width/height
+        // so it doesn't overflow on landscape phones and small tablets.
         const actualW = window.innerWidth;
-        const mobileScale = actualW <= 480 ? 0.75
-                          : actualW <= 768 ? 0.75
+        const mobileScale = actualW <= 480 ? 0.62
+                          : actualW <= 768 ? 0.68
                           : 1;
 
-        // Width: up to 88% of vw, never wider than 1050px (scaled on mobile)
-        const panelW = Math.min(vw * 0.88, 1050 * panelScale) * mobileScale;
+        // Width: up to 80% of vw on mobile, 88% on desktop, capped at 1050px
+        const maxWRatio = actualW <= 768 ? 0.80 : 0.88;
+        const panelW = Math.min(vw * maxWRatio, 1050 * panelScale) * mobileScale;
         // Height: up to 92% of available space, never taller than 480px (scaled)
         const panelH = Math.min(availH * 0.92, 480 * panelScale) * mobileScale;
 

@@ -97,15 +97,35 @@ export class MainMenuScene {
         this._drawPlayBtn(ctx, vw, vh);
     }
 
-    // ── Single source of truth for button position/size ───────
-    // Uses only viewport fractions so it is DPR-agnostic.
-    _calcBtn(vw, vh) {
-        const scale        = Math.min(vw / 1280, vh / 720);
-        const clampedScale = Math.max(scale, 0.55);
+    // ── Layout helper: computes a single scale factor relative to the
+    //    1280×720 reference so every element shrinks proportionally on
+    //    smaller screens, just like camera.js does for the game world.
+    _layoutScale(vw, vh) {
+        return Math.min(vw / 1280, vh / 720);
+    }
 
-        const btnW = Math.round(Math.min(vw * 0.20, 280) * clampedScale);
-        const btnH = Math.round(btnW * 0.40);
+    // ── Single source of truth for button position/size ───────
+    // Scales the button down on small screens instead of clamping
+    // to 0.55, which caused the button to overlap the hero image.
+    _calcBtn(vw, vh) {
+        // Use the true layout scale — no minimum floor so small screens
+        // shrink proportionally and the button stays below the hero image.
+        const s = this._layoutScale(vw, vh);
+
+        // Reference button size at 1280×720
+        const REF_W = 220;
+        const REF_H = 88;
+
+        const btnW = Math.round(REF_W * s);
+        const btnH = Math.round(REF_H * s);
+
+        // Horizontal: centred in the middle third of the screen (between
+        // hero on the left and enemies on the right), same as desktop.
         const btnX = Math.round(vw * 0.5 - btnW / 2);
+
+        // Vertical: sit at 74 % of vh — identical to the original desktop
+        // position.  On small screens vh is already small so this stays
+        // visually in the lower-centre area, well below the hero image.
         const btnY = Math.round(vh * 0.74 - btnH / 2);
 
         return { x: btnX, y: btnY, w: btnW, h: btnH };
@@ -115,13 +135,27 @@ export class MainMenuScene {
         const img = this._heroImg;
         if (!img || !img.complete || !img.naturalWidth) return;
 
-        const ar   = img.naturalWidth / img.naturalHeight;
-        let drawW  = vw * 0.72;
-        let drawH  = drawW / ar;
-        if (drawH > vh) { drawH = vh; drawW = drawH * ar; }
+        const s  = this._layoutScale(vw, vh);
+        const ar = img.naturalWidth / img.naturalHeight;
 
+        // ── Reference draw size at 1280 × 720 ────────────────────
+        // At the desktop reference the image was drawn as:
+        //   drawW = vw * 0.72  →  1280 * 0.72 ≈ 922  (+200 = 1122)
+        //   drawH = drawW / ar                        (+70)
+        // We replicate that reference size and scale it down uniformly
+        // with the same layout scale used by the button.  No hardcoded
+        // pixel offsets — those were the root cause of the overflow.
+        const REF_VW  = 1280;
+        const REF_VH  = 720;
+        const refDrawW = REF_VW * 0.86 + 200;   // ≈ 1122  (original desktop intent)
+        const refDrawH = (REF_VW * 0.83) / ar + 70;
+
+        const drawW = refDrawW * s;
+        const drawH = refDrawH * s;
+
+        // Always anchored to the top-left corner, same as the original.
         ctx.save();
-        ctx.drawImage(img, 0, 0, drawW + 200, drawH + 70);
+        ctx.drawImage(img, 0, 0, drawW, drawH);
         ctx.restore();
     }
 
