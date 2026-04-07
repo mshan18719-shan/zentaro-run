@@ -41,7 +41,7 @@ export class Player {
 
         this.width = 64;
         this.height = 120;
-        this.speed = 5;
+        this.speed = 4;
         this.velX = 0;
         this.velY = 0;
         this.gravity = 0.55;
