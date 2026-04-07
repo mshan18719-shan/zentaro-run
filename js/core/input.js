@@ -7,13 +7,13 @@
 //      events so main.js click handler works on touch devices.
 // ══════════════════════════════════════════════════════════════
 
-const keys  = {};
+const keys = {};
 const vKeys = { left: false, right: false, up: false };
 
 const ctrlRects = {
-    left:  { x: 0, y: 0, w: 0, h: 0 },
+    left: { x: 0, y: 0, w: 0, h: 0 },
     right: { x: 0, y: 0, w: 0, h: 0 },
-    jump:  { x: 0, y: 0, w: 0, h: 0 },
+    jump: { x: 0, y: 0, w: 0, h: 0 },
 };
 
 const touchMap = {};
@@ -22,7 +22,7 @@ function ensureCtrlImg(id, src) {
     let img = document.getElementById(id);
     if (!img) {
         img = document.createElement("img");
-        img.id  = id;
+        img.id = id;
         img.src = src;
         img.hidden = true;
         document.body.appendChild(img);
@@ -31,18 +31,18 @@ function ensureCtrlImg(id, src) {
 }
 
 const ctrlImgs = {
-    left:  ensureCtrlImg("ctrlLeft",  "assets/moveleft-sheet0.png"),
+    left: ensureCtrlImg("ctrlLeft", "assets/moveleft-sheet0.png"),
     right: ensureCtrlImg("ctrlRight", "assets/moveright-sheet0.png"),
-    jump:  ensureCtrlImg("ctrlJump",  "assets/jump-sheet0.png"),
+    jump: ensureCtrlImg("ctrlJump", "assets/jump-sheet0.png"),
 };
 
-window.addEventListener("keydown", e => { keys[e.key] = true;  });
-window.addEventListener("keyup",   e => { keys[e.key] = false; });
+window.addEventListener("keydown", e => { keys[e.key] = true; });
+window.addEventListener("keyup", e => { keys[e.key] = false; });
 
 export function isKeyDown(key) {
     if (keys[key]) return true;
     switch (key) {
-        case "ArrowLeft":  case "a": case "A": return !!vKeys.left;
+        case "ArrowLeft": case "a": case "A": return !!vKeys.left;
         case "ArrowRight": case "d": case "D": return !!vKeys.right;
         case "ArrowUp": case "w": case "W": case " ": return !!vKeys.up;
     }
@@ -50,9 +50,9 @@ export function isKeyDown(key) {
 }
 
 export function resetVirtualKeys() {
-    vKeys.left  = false;
+    vKeys.left = false;
     vKeys.right = false;
-    vKeys.up    = false;
+    vKeys.up = false;
     for (const id in touchMap) delete touchMap[id];
 }
 
@@ -70,11 +70,11 @@ export function setupTouchControls(canvas, getSceneState, GAME_PLAYING_SCENE) {
 
     function canvasXY(e) {
         const rect = canvas.getBoundingClientRect();
-        const src  = e.changedTouches ? Array.from(e.changedTouches) : [e];
+        const src = e.changedTouches ? Array.from(e.changedTouches) : [e];
         return src.map(t => ({
             id: t.identifier ?? "mouse",
-            x:  t.clientX - rect.left,
-            y:  t.clientY - rect.top,
+            x: t.clientX - rect.left,
+            y: t.clientY - rect.top,
             // Keep original clientX/Y for synthetic click dispatch
             clientX: t.clientX,
             clientY: t.clientY,
@@ -95,14 +95,14 @@ export function setupTouchControls(canvas, getSceneState, GAME_PLAYING_SCENE) {
         let anyMovement = false;
         for (const p of canvasXY(e)) {
             let btn = null;
-            if      (inRect(p.x, p.y, ctrlRects.left))  btn = "left";
+            if (inRect(p.x, p.y, ctrlRects.left)) btn = "left";
             else if (inRect(p.x, p.y, ctrlRects.right)) btn = "right";
-            else if (inRect(p.x, p.y, ctrlRects.jump))  btn = "up";
+            else if (inRect(p.x, p.y, ctrlRects.jump)) btn = "up";
 
             if (btn) {
                 touchMap[p.id] = btn;
-                vKeys[btn]     = true;
-                anyMovement    = true;
+                vKeys[btn] = true;
+                anyMovement = true;
             }
         }
 
@@ -123,11 +123,11 @@ export function setupTouchControls(canvas, getSceneState, GAME_PLAYING_SCENE) {
         }
     }
 
-    canvas.addEventListener("touchstart",  onDown, { passive: false });
-    canvas.addEventListener("touchend",    onUp,   { passive: false });
-    canvas.addEventListener("touchcancel", onUp,   { passive: false });
-    canvas.addEventListener("mousedown",   onDown);
-    canvas.addEventListener("mouseup",     onUp);
+    canvas.addEventListener("touchstart", onDown, { passive: false });
+    canvas.addEventListener("touchend", onUp, { passive: false });
+    canvas.addEventListener("touchcancel", onUp, { passive: false });
+    canvas.addEventListener("mousedown", onDown);
+    canvas.addEventListener("mouseup", onUp);
 }
 
 // Fire a real MouseEvent("click") at the given client position.
@@ -135,9 +135,9 @@ export function setupTouchControls(canvas, getSceneState, GAME_PLAYING_SCENE) {
 // interaction without duplicating logic.
 function _fireSyntheticClick(canvas, clientX, clientY) {
     const evt = new MouseEvent("click", {
-        bubbles:    true,
+        bubbles: true,
         cancelable: true,
-        view:       window,
+        view: window,
         clientX,
         clientY,
     });
@@ -147,47 +147,64 @@ function _fireSyntheticClick(canvas, clientX, clientY) {
 // ══════════════════════════════════════════════════════════════
 //  drawTouchControls
 //  Button size rules (landscape phone / tablet):
-//   • Base size = 18 % of the SHORTER viewport side (vh in
-//     landscape), clamped between 70 px and 130 px.
-//     This gives ~61 px on a 340 px-tall phone — comfortably
-//     tappable — and caps at 130 px on large tablets.
+//   • Base size = 22 % of the SHORTER viewport side (vh in
+//     landscape), clamped between 85 px and 150 px.
+//     Larger than before for easier tapping on small phones.
 //   • Jump button = 1.25 × base (bigger target is easier to hit).
-//   • Safe bottom margin = max(20px, 5% of vh) — avoids the
-//     home-indicator bar on iPhones.
-//   • Left & Right sit side by side in the bottom-left corner.
+//   • Safe bottom margin is computed so the TALLEST button (jump)
+//     always stays fully on screen — floor is anchored from the
+//     bottom edge of the jump button, not its top.
+//   • Left & Right sit side by side in the bottom-left corner,
+//     vertically centred on the jump button's centre.
 //   • Jump sits in the bottom-right corner.
 // ══════════════════════════════════════════════════════════════
 export function drawTouchControls(ctx, vw, vh) {
     const shortSide = Math.min(vw, vh);
 
-    // Bigger base: 18 % of shorter side, clamped 70–130 px
-    const btnSize  = Math.round(Math.max(70, Math.min(130, shortSide * 0.18)));
-    const jumpSize = Math.round(btnSize * 1.25);
+    // Your large sizes
+    const btnSize = Math.round(Math.max(130, Math.min(170, shortSide * 0.67)));
+    const jumpSize = Math.round(Math.max(140, Math.min(250, shortSide * 1.25)));
 
-    const safeLeft   = Math.max(18, Math.round(vw * 0.022));
-    const safeBottom = Math.max(20, Math.round(vh * 0.05));
-    const innerGap   = Math.round(btnSize * 0.15);
+    // Fixed layout anchors
+    const safeLeft = Math.max(24, Math.round(vw * 0.03));
+    const safeRight = Math.max(24, Math.round(vw * 0.03));
+    const safeBottom = Math.max(30, Math.round(vh * 0.065));
+    const innerGap = Math.round(btnSize * 0.22);
 
-    const lx = safeLeft;
-    const ly = vh - safeBottom - btnSize;
+    // Base sizes used only to lock original positions
+    const baseBtnSize = 130;
+    const baseJumpSize = 140;
 
-    const rx = lx + btnSize + innerGap;
-    const ry = ly;
+    // Fixed centers for buttons
+    const leftCX = safeLeft + baseBtnSize / 2;
+    const leftCY = vh - safeBottom - baseBtnSize / 2;
 
-    const jx = vw - safeLeft - jumpSize;
-    const jy = vh - safeBottom - jumpSize;
+    const rightCX = safeLeft + baseBtnSize + innerGap + baseBtnSize / 2;
+    const rightCY = leftCY;
 
-    ctrlRects.left  = { x: lx, y: ly, w: btnSize,  h: btnSize  };
-    ctrlRects.right = { x: rx, y: ry, w: btnSize,  h: btnSize  };
-    ctrlRects.jump  = { x: jx, y: jy, w: jumpSize, h: jumpSize };
+    const jumpCX = vw - safeRight - baseJumpSize / 2;
+    const jumpCY = vh - safeBottom - baseJumpSize / 2;
+
+    // Real positions derived from fixed centers
+    const lx = Math.round(leftCX - btnSize / 2);
+    const ly = Math.round(leftCY - btnSize / 2);
+
+    const rx = Math.round(rightCX - btnSize / 2);
+    const ry = Math.round(rightCY - btnSize / 2);
+
+    const jx = Math.round(jumpCX - jumpSize / 2);
+    const jy = Math.round(jumpCY - jumpSize / 2);
+
+    ctrlRects.left = { x: lx, y: ly, w: btnSize, h: btnSize };
+    ctrlRects.right = { x: rx, y: ry, w: btnSize, h: btnSize };
+    ctrlRects.jump = { x: jx, y: jy, w: jumpSize, h: jumpSize };
 
     ctx.save();
-    _drawCtrlBtn(ctx, ctrlImgs.left,  lx, ly, btnSize,  vKeys.left,  "◀");
-    _drawCtrlBtn(ctx, ctrlImgs.right, rx, ry, btnSize,  vKeys.right, "▶");
-    _drawCtrlBtn(ctx, ctrlImgs.jump,  jx, jy, jumpSize, vKeys.up,    "▲");
+    _drawCtrlBtn(ctx, ctrlImgs.left, lx, ly, btnSize, vKeys.left, "◀");
+    _drawCtrlBtn(ctx, ctrlImgs.right, rx, ry, btnSize, vKeys.right, "▶");
+    _drawCtrlBtn(ctx, ctrlImgs.jump, jx, jy, jumpSize, vKeys.up, "▲");
     ctx.restore();
 }
-
 function _drawCtrlBtn(ctx, img, x, y, size, pressed, fallback) {
     const cx = x + size / 2;
     const cy = y + size / 2;
@@ -203,17 +220,17 @@ function _drawCtrlBtn(ctx, img, x, y, size, pressed, fallback) {
     if (img && img.complete && img.naturalWidth > 0) {
         ctx.drawImage(img, x, y, size, size);
     } else {
-        ctx.fillStyle   = pressed ? "rgba(255,200,0,0.9)" : "rgba(0,0,0,0.5)";
+        ctx.fillStyle = pressed ? "rgba(255,200,0,0.9)" : "rgba(0,0,0,0.5)";
         ctx.strokeStyle = "rgba(255,255,255,0.8)";
-        ctx.lineWidth   = 3;
+        ctx.lineWidth = 3;
         ctx.beginPath();
         ctx.arc(cx, cy, size / 2, 0, Math.PI * 2);
         ctx.fill();
         ctx.stroke();
 
-        ctx.fillStyle    = "#fff";
-        ctx.font         = `bold ${Math.round(size * 0.42)}px Arial`;
-        ctx.textAlign    = "center";
+        ctx.fillStyle = "#fff";
+        ctx.font = `bold ${Math.round(size * 0.42)}px Arial`;
+        ctx.textAlign = "center";
         ctx.textBaseline = "middle";
         ctx.fillText(fallback, cx, cy + 2);
     }
