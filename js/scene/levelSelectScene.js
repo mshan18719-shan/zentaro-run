@@ -61,21 +61,62 @@ export class LevelSelectScene {
 
         this._t = 0;
         this._cards = [];   // [{x,y,w,h,level,unlocked}] — hit rects in logical px
-        this._backBtn = null; // {x,y,w,h}
+        this._backBtn = null;    // {x,y,w,h}
+        this._screenBtnRect = null; // {x,y,w,h} — fullscreen toggle
 
         this._panelImg = document.getElementById("levelSelectScreen");
         this._unlockedImg = document.getElementById("levelSheet0");
         this._lockedImg = document.getElementById("levelSheet1");
         this._bgImg = document.getElementById("bg");
+        // Reuse the same spritesheet the HUD uses (2-frame: enter / exit fullscreen)
+        this._screenBtnImg = document.getElementById("screenBtn");
 
         this._map = createMap();
         this._decorEnemies = null;
+
+        // ── Fullscreen state (mirrors HUD._onFSChange) ────────────────
+        this._isFullscreen = !!(
+            document.fullscreenElement       ||
+            document.webkitFullscreenElement ||
+            document.mozFullScreenElement    ||
+            document.msFullscreenElement
+        );
+        this._onFSChange = () => {
+            this._isFullscreen = !!(
+                document.fullscreenElement       ||
+                document.webkitFullscreenElement ||
+                document.mozFullScreenElement    ||
+                document.msFullscreenElement
+            );
+        };
+        document.addEventListener("fullscreenchange",       this._onFSChange);
+        document.addEventListener("webkitfullscreenchange", this._onFSChange);
+        document.addEventListener("mozfullscreenchange",    this._onFSChange);
+        document.addEventListener("MSFullscreenChange",     this._onFSChange);
 
         // Reset enemies when viewport changes (rotation, resize) so
         // _initDecorEnemies recalculates positions for the new svw/svh.
         window.addEventListener("resize", () => {
             this._decorEnemies = null;
         });
+    }
+
+    // ── Fullscreen toggle (identical to HUD._toggleFullscreen) ───
+    _toggleFullscreen() {
+        const el = document.documentElement;
+        if (!this._isFullscreen) {
+            const req = el.requestFullscreen       ||
+                        el.webkitRequestFullscreen  ||
+                        el.mozRequestFullScreen     ||
+                        el.msRequestFullscreen;
+            if (req) req.call(el);
+        } else {
+            const exit = document.exitFullscreen       ||
+                         document.webkitExitFullscreen  ||
+                         document.mozCancelFullScreen   ||
+                         document.msExitFullscreen;
+            if (exit) exit.call(document);
+        }
     }
 
     // ── Build decorative enemies once we know viewport size ───
@@ -183,8 +224,10 @@ export class LevelSelectScene {
 
         ctx.restore();
 
-        // Back button drawn in screen-space (unscaled) so it's always tappable
+        // Back button and screen button drawn in screen-space (unscaled)
+        // so they are always tappable at a consistent physical size.
         this._drawBackBtn(ctx, vw, vh);
+        this._drawScreenBtn(ctx, vw, vh);
 
         // Store scale so handleClick can unproject click coords
         this._scale = scale;
@@ -429,8 +472,82 @@ export class LevelSelectScene {
         ctx.restore();
     }
 
+    // ── Screen / Fullscreen button (top-right, mirrors HUD layout) ──
+    _drawScreenBtn(ctx, vw, vh) {
+        // Match the HUD's sizing logic so the button looks identical
+        const hudScale  = Math.max(0.6, Math.min(1.0, Math.min(vw / 960, vh / 540)));
+        const btnSize   = Math.round(52 * hudScale);
+        const topMargin = Math.round(14 * hudScale);
+
+        const bx = vw - topMargin - btnSize;
+        const by = topMargin;
+
+        // Store hit-rect in screen-space (same as _backBtn)
+        this._screenBtnRect = { x: bx, y: by, w: btnSize, h: btnSize };
+
+        const img = this._screenBtnImg;
+        if (img && img.complete && img.naturalWidth) {
+            // Spritesheet: 2 columns — col 0 = enter FS, col 1 = exit FS
+            // (mirrors the frame selection logic in HUD.draw)
+            const frameW = Math.floor(img.naturalWidth / 2);
+            const frameH = img.naturalHeight;
+            const srcCol = this._isFullscreen ? 0 : 1;
+            ctx.drawImage(
+                img,
+                srcCol * frameW, 0, frameW, frameH,
+                bx, by, btnSize, btnSize
+            );
+        } else {
+            // Fallback: green circle with expand / compress arrows
+            const cx = bx + btnSize / 2;
+            const cy = by + btnSize / 2;
+            const r  = btnSize / 2;
+
+            ctx.save();
+            ctx.fillStyle   = "#27ae60";
+            ctx.shadowColor = "rgba(0,0,0,0.25)";
+            ctx.shadowBlur  = 8;
+            ctx.beginPath();
+            ctx.arc(cx, cy, r, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.shadowBlur = 0;
+
+            ctx.strokeStyle = "#fff";
+            ctx.lineWidth   = 2.5;
+            const sc  = btnSize / 52;
+            const pad = 13 * sc;
+            ctx.beginPath();
+            if (!this._isFullscreen) {
+                // Expand arrows
+                ctx.moveTo(bx + pad,             by + pad + 8 * sc);
+                ctx.lineTo(bx + pad,             by + pad);
+                ctx.lineTo(bx + pad + 8 * sc,   by + pad);
+                ctx.moveTo(bx + btnSize - pad,           by + btnSize - pad - 8 * sc);
+                ctx.lineTo(bx + btnSize - pad,           by + btnSize - pad);
+                ctx.lineTo(bx + btnSize - pad - 8 * sc, by + btnSize - pad);
+            } else {
+                // Compress arrows
+                ctx.moveTo(bx + pad + 8 * sc,   by + pad);
+                ctx.lineTo(bx + pad,             by + pad);
+                ctx.lineTo(bx + pad,             by + pad + 8 * sc);
+                ctx.moveTo(bx + btnSize - pad - 8 * sc, by + btnSize - pad);
+                ctx.lineTo(bx + btnSize - pad,           by + btnSize - pad);
+                ctx.lineTo(bx + btnSize - pad,           by + btnSize - pad - 8 * sc);
+            }
+            ctx.stroke();
+            ctx.restore();
+        }
+    }
+
     // mx/my are LOGICAL (CSS) pixels from main.js click handler
     handleClick(mx, my) {
+        // Screen button — always check first (top-right, screen-space)
+        const sb = this._screenBtnRect;
+        if (sb && mx >= sb.x && mx <= sb.x + sb.w && my >= sb.y && my <= sb.y + sb.h) {
+            this._toggleFullscreen();
+            return;
+        }
+
         // Back button is drawn in screen-space, test against raw coords
         const b = this._backBtn;
         if (b && mx >= b.x && mx <= b.x + b.w && my >= b.y && my <= b.y + b.h) {
