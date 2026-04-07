@@ -407,7 +407,6 @@ export function createPlatformsLevel1(TILE) {
             // Over the water pit at cols 101-104, row 11 area
             // new MovingBridge(99  * TILE, 10 * TILE, { axis: "x", range: 3 * TILE, speed: 1.4 }),
             // Between the two raised platforms at cols 64-76, row 7
-            new MovingBridge(8 * TILE, 11 * TILE, { axis: "x", range: 4 * TILE, speed: 1.8, startOffset: 0.4 }),
             // new MovingBridge(68  * TILE,  6 * TILE, { axis: "x", range: 3 * TILE, speed: 1.6, startOffset: 0.5 }),
             // Vertical bob-platform near the tall wall (col 119)
             new MovingBridge(88 * TILE, 8 * TILE, { axis: "y", range: 5 * TILE, speed: 1.2, startOffset: 0.3 }),
