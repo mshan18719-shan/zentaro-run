@@ -629,7 +629,7 @@ function loop(ts) {
                             if (player.velY > 0 &&
                                 player.y + player.height < enemy.y + enemy.height * 0.6) {
                                 enemy.dead = true;
-                                player.velY = -8;
+                                player.velY = -15;
                                 player.score += 100;
                                 SoundManager.play("stomp");
                                 explosions.spawn(
