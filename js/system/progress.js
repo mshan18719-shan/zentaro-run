@@ -1,7 +1,7 @@
 const STORAGE_KEY = "madboy_progress";
 
 // Only these levels are actually implemented right now.
-const PLAYABLE_LEVELS = new Set([1, 2, 3]);
+const PLAYABLE_LEVELS = new Set([1, 2, 3, 4, 5]);
 
 function defaultLevel() {
     return {

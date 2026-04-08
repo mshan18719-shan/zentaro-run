@@ -461,14 +461,32 @@ export function createPlatformsLevel3(TILE) {
         bridges: [
             // ── Zone 2: Bridge over Gap 1 (cols 20-24) ──────────────────
             // Moves sideways, player must time the jump onto it
-            new MovingBridge(26 * TILE, 11 * TILE, { axis: "x", range: 4 * TILE, speed: 2.0 }),
+            new MovingBridge(24 * TILE, 11 * TILE, { axis: "x", range: 4 * TILE, speed: 2.0 }),
 
         ],
         bobs: [
             // ── Zone 1: Low horizontal sweep over spike field ────────────
             // Forces player to jump + navigate spikes at same time
-            new MetalBob( 1 * TILE, 8 * TILE, { axis: "x", range: 3 * TILE, speed: 2.8 }),
+            // new MetalBob( 1 * TILE, 8 * TILE, { axis: "x", range: 3 * TILE, speed: 2.8 }),
             new MetalBob( 20 * TILE,  0 * TILE, { axis: "y", range: 4 * TILE, speed: 3.5, startOffset: 0.5 }),
+        ],
+    };
+}
+
+export function createPlatformsLevel4(TILE) {
+    return {
+        bridges: [
+            // ── Zone 2: Bridge over Gap 1 (cols 20-24) ──────────────────
+            // Moves sideways, player must time the jump onto it
+            // new MovingBridge(24 * TILE, 11 * TILE, { axis: "x", range: 4 * TILE, speed: 2.0 }),
+            new MovingBridge(104 * TILE, 9 * TILE, { axis: "y", range: 3 * TILE, speed: 1.3, startOffset: 0.6 }),
+
+        ],
+        bobs: [
+            // ── Zone 1: Low horizontal sweep over spike field ────────────
+            // Forces player to jump + navigate spikes at same time
+            // new MetalBob( 1 * TILE, 8 * TILE, { axis: "x", range: 3 * TILE, speed: 2.8 }),
+            new MetalBob(135 * TILE, 9 * TILE, { axis: "y", range: 4 * TILE, speed: 2.5, startOffset: 0.2 }),
         ],
     };
 }

@@ -10,9 +10,9 @@
 import { isKeyDown } from "../core/input.js";
 import { isSolid, isHazard } from "../world/map.js";
 
-const SPRITE_W = 80;
-const SPRITE_H = 128;
-const MAX_AIR_JUMPS = 1;
+const SPRITE_W = 90;
+const SPRITE_H = 150;
+const MAX_AIR_JUMPS = 2;
 const RUN_ANIM_SPEED = 7;
 const IDLE_ANIM_SPEED = 50;
 
@@ -39,9 +39,9 @@ export class Player {
         this.map = map;
         this.tileSize = tileSize;
 
-        this.width = 64;
-        this.height = 120;
-        this.speed = 4;
+        this.width = 75;
+        this.height = 140;
+        this.speed = 5;
         this.velX = 0;
         this.velY = 0;
         this.gravity = 0.55;
