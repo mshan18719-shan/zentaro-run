@@ -12,7 +12,7 @@ import { isSolid, isHazard } from "../world/map.js";
 
 const SPRITE_W = 90;
 const SPRITE_H = 150;
-const MAX_AIR_JUMPS = 2;
+const MAX_AIR_JUMPS = 1;
 const RUN_ANIM_SPEED = 7;
 const IDLE_ANIM_SPEED = 50;
 

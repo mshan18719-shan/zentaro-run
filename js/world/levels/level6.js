@@ -1,21 +1,34 @@
 // ══════════════════════════════════════════════════════════════
-//  world/levels/level4.js
-//  Everything for Level 4: map, platforms, coins, boxes, stars, enemies.
-//  ✦ Replace the stub createMap() below with your actual level 4 layout.
+//  world/levels/level6.js  —  "The Gauntlet"
+//  The ultimate final level. Six brutal zones:
+//
+//  Zone 1 (cols 0–25)   : Descent Alley — cascading upper ledges +
+//                          spiked staircase forcing careful drop-downs.
+//  Zone 2 (cols 26–55)  : River of Doom — wide water crossing with
+//                          moving bridges and vertical metal bobs.
+//  Zone 3 (cols 56–85)  : The Labyrinth — tall walls, locked corridors,
+//                          spike ceilings, forced tight navigation.
+//  Zone 4 (cols 86–110) : Black Hole Valley — floor replaced by black
+//                          holes, only floating platforms + moving bridges
+//                          to cross. Metal bobs patrol the air.
+//  Zone 5 (cols 111–135): Sky Fortress — elevated upper road + lower
+//                          ground pits, cross between them via narrow gaps.
+//  Zone 6 (cols 136–149): Final Sprint — dense enemy gauntlet with
+//                          spike floor, one last moving bridge to the door.
 // ══════════════════════════════════════════════════════════════
 
 import { FlyEnemy, WalkerEnemy, JumperEnemy, PatrolEnemy } from "../../entities/enemy.js";
 import { Coin, TreasureBox, Star } from "../../entities/coin.js";
-import { createPlatformsLevel4 } from "../platform.js"; // swap for createPlatformsLevel4 when ready
+import { createPlatformsLevel6 } from "../platform.js";
 
 // ── Door position ─────────────────────────────────────────────
 export const DOOR = { col: 148, midRow: 13, topRow: 12 };
 
 // ── Platform factory ──────────────────────────────────────────
-export { createPlatformsLevel4 as createLevelPlatforms };
+export { createPlatformsLevel6 as createLevelPlatforms };
 
 // ══════════════════════════════════════════════════════════════
-//  MAP  ← put your Level 4 tile layout here
+//  MAP
 // ══════════════════════════════════════════════════════════════
 export function createMap() {
     const rows = 15;
@@ -23,144 +36,312 @@ export function createMap() {
 
     const map = Array.from({ length: rows }, () => new Int8Array(cols));
 
-    // Ground floor
+    // ── Ground floor (standard, will be overridden in hazard zones) ─
     for (let x = 0; x < cols; x++) map[14][x] = 1;
 
-    // Starting board + big cactus landmark
-    map[12][7] = 12;
+    // ════════════════════════════════════════════════════════════
+    //  ZONE 1 — Descent Alley  (cols 0–25)
+    //  Three cascading upper ledges force the player down through
+    //  spike layers. Miss a ledge → land on spikes.
+    // ════════════════════════════════════════════════════════════
+
+    // Starting board + big cactus
+    map[12][1] = 12;
     map[11][3] = 7;
 
-    // Two small platforms player can hop to for safety
-    map[7][1] = 1; map[7][2] = 1; map[7][3] = 1;
-    map[8][1] = 15; map[8][2] = 15; map[8][3] = 15;
+    // Upper road — player starts high
+    for (let x = 0; x <= 7; x++) map[6][x] = 1;
+    map[7][0] = 15; map[7][1] = 15; map[7][2] = 15; // spike ceiling under upper road
 
-    // Crystal & rock decorations
-    map[12][9] = 9;   // rock
-    map[12][12] = 6;   // cactus
-    map[12][13] = 9;   // rock
-    map[12][17] = 17;  // fence
-    map[12][18] = 18;  // fence brokem
-    map[12][22] = 16;  // grass
-    map[12][27] = 6;  // cactus
-    map[12][29] = 13;  // crystal
+    // First drop ledge
+    for (let x = 9; x <= 13; x++) map[8][x] = 1;
+    map[9][9] = 15; map[9][10] = 15; map[9][11] = 15;
 
-    map[9][15] = 1; map[9][17] = 1; map[9][19] = 1; map[9][21] = 1; map[9][23] = 1;
+    // Second drop ledge
+    for (let x = 15; x <= 19; x++) map[10][x] = 1;
 
-    // River cols 42–57
-    map[12][40] = 6; map[12][42] = 9;
-    map[3][65] = 10; map[3][67] = 11;
-    for (let x = 31; x <= 37; x++) map[14][x] = 3;
-    for (let x = 44; x <= 50; x++) map[14][x] = 3;
-    for (let x = 57; x <= 110; x++) map[14][x] = 3;
-    map[5][65] = 1; map[5][66] = 1; map[5][67] = 1;
-    map[10][64] = 21; map[10][65] = 22; map[10][66] = 22; map[10][67] = 22; map[10][68] = 23;
-    for (let x = 73; x <= 76; x++) map[7][x] = 1;
-    for (let x = 84; x <= 88; x++) map[7][x] = 1;
-    for (let x = 97; x <= 99; x++) map[7][x] = 1;
-    for (let y = 8; y <= 10; y++) map[y][97] = 8;
-    for (let y = 8; y <= 10; y++) map[y][99] = 8;
-    for (let y = 8; y <= 10; y++) map[y][98] = 8;
 
-    for (let x = 100; x <= 116; x++) map[3][x] = 1;
-    for (let y = 4; y <= 10; y++) map[y][115] = 8;
-    for (let y = 4; y <= 10; y++) map[y][116] = 8;
+    // Cactus + rock decorations
+    map[12][4] = 6;   // cactus
+    map[12][22] = 9;   // rock
+    map[12][24] = 13;  // crystal
+    map[5][6] = 16;  // grass on upper road
 
-    for (let x = 117; x <= 120; x++) map[9][x] = 1;
-    map[10][117] = 8; map[10][118] = 8; map[10][119] = 8; map[10][120] = 8;
-    for (let y = 0; y <= 10; y++) map[y][121] = 8;
-    for (let y = 0; y <= 10; y++) map[y][122] = 8;
+    // Long left wall — forces player to navigate around it
+    for (let y = 0; y <= 8; y++) map[y][25] = 8;
+    for (let y = 0; y <= 8; y++) map[y][26] = 8;
 
-    for (let x = 111; x <= 112; x++) map[8][x] = 1;
-    for (let y = 9; y <= 14; y++) map[y][111] = 8;
-    for (let y = 9; y <= 14; y++) map[y][112] = 8;
+    // ════════════════════════════════════════════════════════════
+    //  ZONE 2 — River of Doom  (cols 27–55)
+    //  Wide water gap. Only moving bridges + two stone islands.
+    //  Spikes line both banks.
+    // ════════════════════════════════════════════════════════════
 
-    for (let y = 5; y <= 14; y++) map[y][128] = 8;
-    for (let y = 5; y <= 14; y++) map[y][129] = 8;
+    // Replace ground with water for the whole zone
+    for (let x = 27; x <= 54; x++) map[14][x] = 3;  // water tile (top)
+
+    // Left bank decoration
+    map[12][25] = 6;                      // cactus on bank
+
+    // Two stone islands (barely reachable without bridge)
+    map[12][33] = 1; map[12][34] = 1;
+    map[13][33] = 15;                     // spike under island 1
+    map[12][44] = 1; map[12][45] = 1;
+    map[13][44] = 15;                     // spike under island 2
+
+    // Raised platform over water — reward for going high
+    for (let x = 37; x <= 40; x++) map[8][x] = 1;
+    map[9][37] = 15; map[9][40] = 15;   // spike on platform ends
+
+    // Right bank spikes + wall
+    map[9][55] = 1;
+    for (let y = 10; y <= 14; y++) map[y][55] = 8;  // right bank wall
+
+    // ════════════════════════════════════════════════════════════
+    //  ZONE 3 — The Labyrinth  (cols 56–85)
+    //  Long walls create narrow corridors. Spike ceilings in tight
+    //  passages. Enemies patrol the hallways.
+    // ════════════════════════════════════════════════════════════
+
+    // Corridor 1: low ceiling passageway (rows 10–14, cols 56–65)
+    for (let x = 56; x <= 66; x++) map[10][x] = 1;  // ceiling
+    for (let x = 57; x <= 64; x++) map[11][x] = 15; // spike ceiling (under the floor above)
+    // Right wall sealing corridor 1
+    map[11][65] = 8; map[11][66] = 8;
+    // for (let y = 10; y <= 14; y++) map[y][66] = 8;
+
+    // Upper path above corridor 1
+    for (let x = 56; x <= 66; x++) map[4][x] = 1;
+    map[5][56] = 15; map[5][65] = 15;  // spike hazards on upper path
+
+    // Vertical connector — gap players must fall through
+    // (no tiles at col 67, forcing a blind drop)
+
+    // Corridor 2: mid height (rows 7–9, cols 68–78)
+    for (let x = 69; x <= 78; x++) map[7][x] = 1;   // upper wall
+    for (let x = 72; x <= 78; x++) map[9][x] = 1;   // lower wall (narrow gap)
+    map[8][78] = 15;                // spike gates on each end
+
+    // Wall sealing corridor 2 on the right
+    for (let y = 0; y <= 9; y++) map[y][78] = 8;
+    for (let y = 0; y <= 9; y++) map[y][79] = 8;
+
+    // High reward shelf
+    for (let x = 80; x <= 84; x++) map[3][x] = 1;
+
+    // Decorations in labyrinth
+    map[9][57] = 9;   // rock
+    map[12][71] = 13;  // crystal
+    map[6][81] = 16;  // grass on high shelf
+
+    // ════════════════════════════════════════════════════════════
+    //  ZONE 4 — Black Hole Valley  (cols 86–110)
+    //  Entire floor replaced by black holes. Three floating platforms
+    //  (stepped: high→mid→low→mid→high). Moving bridges span the gaps.
+    //  Metal bobs patrol vertically. Most dangerous zone.
+    // ════════════════════════════════════════════════════════════
+
+    for (let x = 85; x <= 110; x++) map[14][x] = 25; // black hole floor
+
+    // Stepped floating platforms
+    map[9][86] = 1; map[9][87] = 1; map[9][88] = 1;
+    map[6][91] = 1; map[6][92] = 1; map[6][93] = 1;
+    map[4][96] = 1; map[4][97] = 1;                   // highest point
+    map[6][100] = 1; map[6][101] = 1; map[6][102] = 1;
+    map[9][105] = 1; map[9][106] = 1; map[9][107] = 1;
+    // Spike traps on platforms
+    map[10][86] = 15;
+    map[7][93] = 15;
+    map[10][107] = 15;
+
+    // Ledge above the void to tempt a risky jump
+    for (let x = 108; x <= 110; x++) map[11][x] = 1;
+    map[12][108] = 15; map[12][110] = 15;
+
+    // Crystal & big-cactus visible near the black hole edge
+    map[8][85] = 13;  // crystal
+    map[12][84] = 7;   // big cactus silhouette before void
+
+    // ════════════════════════════════════════════════════════════
+    //  ZONE 5 — Sky Fortress  (cols 111–135)
+    //  Two roads: upper road (rows 3–4) and lower ground (row 14).
+    //  Narrow vertical slots players must drop through to switch
+    //  between roads. Spike pits guard the lower road.
+    // ════════════════════════════════════════════════════════════
+
+    // Lower ground restored here
+    for (let x = 111; x <= 149; x++) map[14][x] = 1;
+
+    // Upper road — long elevated highway
+    for (let x = 111; x <= 118; x++) map[4][x] = 1;
+    for (let x = 122; x <= 126; x++) map[4][x] = 1;
+    for (let x = 130; x <= 135; x++) map[4][x] = 1;
+
+    // Vertical walls creating the "fortress" feel
+    for (let y = 5; y <= 14; y++) map[y][114] = 8;
+    for (let y = 5; y <= 14; y++) map[y][115] = 8;
+
+    for (let y = 5; y <= 14; y++) map[y][122] = 8;
+    for (let y = 5; y <= 14; y++) map[y][123] = 8;
+
     for (let y = 5; y <= 14; y++) map[y][130] = 8;
-    for (let x = 128; x <= 130; x++) map[4][x] = 1;
+    for (let y = 5; y <= 14; y++) map[y][131] = 8;
 
-    map[8][123] = 1; map[8][124] = 1;
+    // Drop-down slots in upper road (two-tile gaps between walls)
+    // Slot 1: col 116 (between walls 115 and 122) — gap in upper road already implicit
+    // Add a mid-ledge to break the fall
+    map[9][118] = 1; map[9][119] = 1;
 
-    for (let x = 133; x <= 144; x++) map[14][x] = 25;
+    // Slot 2: col 124 gap — mid ledge
+    map[9][126] = 1; map[9][127] = 1;
 
-    for (let x = 138; x <= 142; x++) map[10][x] = 1;
 
+    // Decorations
+    map[3][112] = 13;  // crystal near fort entrance
+    map[3][133] = 16;  // grass at upper road end
+    map[12][132] = 6;  // cactus below
+    map[12][135] = 9;  // rock near end
 
-    // Door
-    map[12][146] = 24;
-    map[12][148] = 5;
-    map[13][148] = 4;
+    // Safe stepping stones through the spikes
+    map[10][136] = 1; map[10][137] = 1;
+    map[10][140] = 1; map[10][141] = 1;
+
+    // Door setup
+    map[12][146] = 24;  // exit sign
+    map[12][148] = 5;   // door top
+    map[13][148] = 4;   // door body
 
     return map;
 }
 
 // ══════════════════════════════════════════════════════════════
-//  ENTITIES  ← put your Level 4 enemies / coins / stars here
+//  ENTITIES
 // ══════════════════════════════════════════════════════════════
 export function createLevelEntities(map, TILE, player) {
+
+    // ── Coins ─────────────────────────────────────────────────
     const coinDefs = [
-        { col: 20, row: 7 },  { col: 23, row: 7 },
-        { col: 26, row: 11 },  { col: 24, row: 11 }, { col: 22, row: 11 }, { col: 20, row: 11 },
-        { col: 39, row: 10 },  { col: 41, row: 10 },
-        { col: 66, row: 9 },  { col: 54, row: 12 },
-        { col: 74, row: 3 },  { col: 76, row: 3 },
-        { col: 85, row: 3 },  { col: 87, row: 3 },
-        { col: 104, row: 7 }, { col: 104, row: 9 }, { col: 104, row: 11 },
-        { col: 109, row: 2 },  { col: 107, row: 2 }, { col: 105, row: 2 }, { col: 103, row: 2 },
-        { col: 111, row: 2 },  { col: 113, row: 2 }, { col: 115, row: 2 },
-        { col: 117, row: 8 },  { col: 117, row: 6 }, { col: 117, row: 4 }, { col: 117, row: 2 },
-        { col: 118, row: 8 },  { col: 118, row: 6 }, { col: 118, row: 4 }, { col: 118, row: 2 },
-        { col: 115, row: 13 }, { col: 117, row: 13 }, { col: 119, row: 13 },
-        { col: 121, row: 13 }, { col: 123, row: 13 }, { col: 125, row: 13 },
-        { col: 129, row: 2 },
-        { col: 139, row: 8 }, { col: 141, row: 8 }, { col: 134, row: 6 },
+        // Zone 1 — descent ledges
+        { col: 2, row: 4 }, { col: 4, row: 4 }, { col: 6, row: 4 },
+        { col: 10, row: 6 }, { col: 12, row: 6 },
+        { col: 16, row: 8 }, { col: 18, row: 8 },
+        { col: 22, row: 11 }, { col: 23, row: 11 },
+
+        // Zone 2 — river crossing
+        { col: 33, row: 10 }, { col: 34, row: 10 },
+        { col: 38, row: 6 }, { col: 39, row: 6 },
+        { col: 44, row: 10 }, { col: 45, row: 10 },
+        { col: 48, row: 11 }, { col: 50, row: 11 }, { col: 52, row: 11 },
+
+        // Zone 3 — labyrinth corridors
+        { col: 58, row: 9 }, { col: 60, row: 9 }, { col: 62, row: 9 },
+        { col: 58, row: 2 }, { col: 60, row: 2 }, { col: 63, row: 2 },
+        { col: 70, row: 5 }, { col: 72, row: 5 }, { col: 74, row: 5 },
+        { col: 71, row: 10 }, { col: 73, row: 10 },
+        { col: 81, row: 1 }, { col: 82, row: 1 }, { col: 83, row: 1 },
+
+        // Zone 4 — black hole valley
+        { col: 87, row: 7 }, { col: 88, row: 7 },
+        { col: 92, row: 4 },
+        { col: 97, row: 2 }, { col: 98, row: 2 },         // highest platform reward
+        { col: 100, row: 4 }, { col: 102, row: 4 },
+        { col: 105, row: 7 }, { col: 107, row: 7 },
+        { col: 109, row: 9 }, { col: 110, row: 9 },
+
+        // Zone 5 — sky fortress
+        { col: 112, row: 2 }, { col: 114, row: 2 },
+        { col: 116, row: 2 }, { col: 118, row: 2 }, { col: 120, row: 2 },
+        { col: 117, row: 7 }, { col: 119, row: 7 },
+        { col: 124, row: 2 }, { col: 126, row: 2 }, { col: 128, row: 2 },
+        { col: 125, row: 7 }, { col: 127, row: 7 },
+        { col: 132, row: 2 }, { col: 134, row: 2 },
+
+        // Zone 6 — final sprint
+        { col: 136, row: 8 }, { col: 137, row: 8 },
+        { col: 140, row: 8 }, { col: 141, row: 8 },
+        { col: 144, row: 2 }, { col: 146, row: 2 },
     ];
     const coins = coinDefs.map(({ col, row }) =>
         new Coin(col * TILE + (TILE - 28) / 2, row * TILE - 32)
     );
 
+    // ── Treasure Boxes ────────────────────────────────────────
+    // Clustered in the most dangerous spots — reward for bravery
     const boxes = [
-        new TreasureBox(14, 9, TILE, (pts) => { player.score += pts; }),
-        new TreasureBox(16, 9, TILE, (pts) => { player.score += pts; }),
-        new TreasureBox(18, 9, TILE, (pts) => { player.score += pts; }),
-        new TreasureBox(20, 9, TILE, (pts) => { player.score += pts; }),
-        new TreasureBox(22, 9, TILE, (pts) => { player.score += pts; }),
-        new TreasureBox(64, 5, TILE, (pts) => { player.score += pts; }),
-        new TreasureBox(68, 5, TILE, (pts) => { player.score += pts; }),
+        // Zone 1 — top of the descent, guarded by spike corridor
+        new TreasureBox(2, 5, TILE, (pts) => { player.score += pts; }),
+        new TreasureBox(3, 5, TILE, (pts) => { player.score += pts; }),
+
+        // Zone 4 — floating on the highest void platform
+        new TreasureBox(96, 3, TILE, (pts) => { player.score += pts; }),
+        new TreasureBox(97, 3, TILE, (pts) => { player.score += pts; }),
+
+        // Zone 5 — fortress upper road, late zone reward
+        new TreasureBox(132, 3, TILE, (pts) => { player.score += pts; }),
+        new TreasureBox(133, 3, TILE, (pts) => { player.score += pts; }),
+        new TreasureBox(134, 3, TILE, (pts) => { player.score += pts; }),
     ];
 
+    // ── Stars ─────────────────────────────────────────────────
+    // Three stars placed in truly punishing spots
     const stars = [
-        new Star(2 * TILE, 4 * TILE - 64),
-        new Star(66 * TILE, 4 * TILE - 64),
-        new Star(132 * TILE - 10, 13 * TILE - 64),
+        new Star(38 * TILE, 5 * TILE - 64),   // Zone 2 — elevated river platform
+        new Star(97 * TILE, 1 * TILE - 64),   // Zone 4 — top of the void
+        new Star(133 * TILE - 10, 1 * TILE - 64),   // Zone 5 — fortress summit
     ];
 
+    // ── Enemies ───────────────────────────────────────────────
     const groundY = (map.length - 1) * TILE;
     const enemies = [
-        new FlyEnemy(8 * TILE,   11 * TILE, map, TILE, { speed: 2.8, floatAmplitude: 24, floatSpeed: 0.055 }),
-        new FlyEnemy(24 * TILE,  10 * TILE, map, TILE, { speed: 3.0, floatAmplitude: 28, floatSpeed: 0.060 }),
-        new FlyEnemy(47 * TILE,  8 * TILE,  map, TILE, { speed: 3.2, floatAmplitude: 30, floatSpeed: 0.065 }),
-        new FlyEnemy(63 * TILE,  2 * TILE,  map, TILE, { speed: 3.0, floatAmplitude: 22, floatSpeed: 0.060 }),
-        new FlyEnemy(115 * TILE, 5 * TILE,  map, TILE, { speed: 3.5, floatAmplitude: 26, floatSpeed: 0.070 }),
 
-        new WalkerEnemy(126 * TILE,  groundY,   map, TILE, { speed: 2.5, dir: -1 }),
-        new WalkerEnemy(29 * TILE, groundY, map, TILE, { speed: 4.0, dir: -1 }),
+        // ── FlyEnemies — patrol above gaps & spike zones ────────
+        new FlyEnemy( 5 * TILE,   4 * TILE,  map, TILE, { speed: 3.2, floatAmplitude: 22, floatSpeed: 0.060 }),
+        new FlyEnemy(17 * TILE,   7 * TILE,  map, TILE, { speed: 3.5, floatAmplitude: 26, floatSpeed: 0.065 }),
+        new FlyEnemy(35 * TILE,   6 * TILE,  map, TILE, { speed: 3.8, floatAmplitude: 28, floatSpeed: 0.070 }),
+        new FlyEnemy(48 * TILE,   9 * TILE,  map, TILE, { speed: 4.0, floatAmplitude: 30, floatSpeed: 0.075 }),
+        new FlyEnemy(70 * TILE,   4 * TILE,  map, TILE, { speed: 4.0, floatAmplitude: 24, floatSpeed: 0.070 }),
+        new FlyEnemy(92 * TILE,   2 * TILE,  map, TILE, { speed: 4.5, floatAmplitude: 32, floatSpeed: 0.080 }),
+        new FlyEnemy(120 * TILE,  1 * TILE,  map, TILE, { speed: 4.5, floatAmplitude: 28, floatSpeed: 0.080 }),
+        new FlyEnemy(140 * TILE,  7 * TILE,  map, TILE, { speed: 5.0, floatAmplitude: 26, floatSpeed: 0.085 }),
 
-        new JumperEnemy(28 * TILE,  groundY,   map, TILE, { jumpForce: -20, jumpInterval: 55 }),
-        new JumperEnemy(55 * TILE,  groundY,   map, TILE, { jumpForce: -17, jumpInterval: 45 }),
-        new JumperEnemy(41 * TILE,  groundY,   map, TILE, { jumpForce: -20, jumpInterval: 25 }),
-        new JumperEnemy(85 * TILE, 6 * TILE,  map, TILE, { jumpForce: -17, jumpInterval: 90 }),
-        new JumperEnemy(126 * TILE, groundY,   map, TILE, { jumpForce: -18, jumpInterval: 85 }),
-        new JumperEnemy(128 * TILE, 3 * TILE, map, TILE, { jumpForce: -9, jumpInterval: 90 }),
+        // ── WalkerEnemies — fast ground threats ─────────────────
+        new WalkerEnemy( 22 * TILE, groundY,      map, TILE, { speed: 3.5, dir:  1 }),
+        new WalkerEnemy(147 * TILE, groundY, map, TILE, { speed: 5.0, dir: -1 }),
 
-        new PatrolEnemy(14 * TILE,  9 * TILE,  map, TILE, { speed: 3.5, patrolLeft: 14 * TILE,  patrolRight: 24 * TILE }),
-        new PatrolEnemy(20 * TILE,  groundY, map, TILE, { speed: 3.5, patrolLeft: 15 * TILE,  patrolRight: 25 * TILE }),
-        new PatrolEnemy(38 * TILE,  3 * TILE, map, TILE, { speed: 4.5, patrolLeft: 38 * TILE,  patrolRight: 44 * TILE }),
-        new PatrolEnemy(73 * TILE,  6 * TILE, map, TILE, { speed: 4.5, patrolLeft: 73 * TILE,  patrolRight: 77 * TILE }),
-        new PatrolEnemy(100 * TILE, 2 * TILE, map, TILE, { speed: 4.5, patrolLeft: 100 * TILE,  patrolRight: 116 * TILE }),
-        new PatrolEnemy(116 * TILE,  2 * TILE, map, TILE, { speed: 4.5, patrolLeft: 100 * TILE,  patrolRight: 116 * TILE }),
-        new PatrolEnemy(118 * TILE,  groundY,  map, TILE, { speed: 6,  patrolLeft: 112 * TILE,  patrolRight: 128 * TILE }),
-        new PatrolEnemy(138 * TILE, 9 * TILE, map, TILE, { speed: 5, patrolLeft: 138 * TILE, patrolRight: 142 * TILE }),
+        // ── JumperEnemies — unpredictable launch threats ─────────
+        new JumperEnemy(  8 * TILE, groundY,      map, TILE, { jumpForce: -18, jumpInterval: 40 }),
+        new JumperEnemy( 59 * TILE, 9  * TILE,    map, TILE, { jumpForce: -15, jumpInterval: 35 }),
+        new JumperEnemy( 74 * TILE, 8  * TILE,    map, TILE, { jumpForce: -16, jumpInterval: 45 }),
+        new JumperEnemy( 87 * TILE, 8  * TILE,    map, TILE, { jumpForce: -18, jumpInterval: 50 }),
+        new JumperEnemy(106 * TILE, 8  * TILE,    map, TILE, { jumpForce: -18, jumpInterval: 50 }),
+        new JumperEnemy(120 * TILE, groundY, map, TILE, { jumpForce: -20, jumpInterval: 35 }),
+        new JumperEnemy(128 * TILE, groundY, map, TILE, { jumpForce: -22, jumpInterval: 30 }),
+
+        // ── PatrolEnemies — tight corridor guards ────────────────
+        // Zone 1 — descent corridor guards
+        new PatrolEnemy(  4 * TILE,  5 * TILE,  map, TILE, { speed: 4.0, patrolLeft:  0 * TILE, patrolRight:  7 * TILE }),
+        new PatrolEnemy( 10 * TILE,  7 * TILE,  map, TILE, { speed: 4.0, patrolLeft:  9 * TILE, patrolRight: 13 * TILE }),
+        new PatrolEnemy( 19 * TILE,  groundY,  map, TILE, { speed: 4.0, patrolLeft:  12 * TILE, patrolRight: 19 * TILE }),
+
+        // Zone 3 — labyrinth corridor guards
+        new PatrolEnemy( 60 * TILE,  9 * TILE,  map, TILE, { speed: 5.0, patrolLeft: 57 * TILE, patrolRight: 64 * TILE }),
+        new PatrolEnemy( 57 * TILE,  4 * TILE,  map, TILE, { speed: 5.0, patrolLeft: 56 * TILE, patrolRight: 65 * TILE }),
+        new PatrolEnemy( 70 * TILE,  6 * TILE,  map, TILE, { speed: 5.5, patrolLeft: 69 * TILE, patrolRight: 78 * TILE }),
+        new PatrolEnemy( 68 * TILE,  8 * TILE,  map, TILE, { speed: 5.0, patrolLeft: 68 * TILE, patrolRight: 79 * TILE }),
+        new PatrolEnemy( 82 * TILE,  2 * TILE,  map, TILE, { speed: 4.5, patrolLeft: 80 * TILE, patrolRight: 84 * TILE }),
+
+        // Zone 4 — black hole valley, floating platform guards
+        new PatrolEnemy( 91 * TILE,  5 * TILE,  map, TILE, { speed: 4, patrolLeft: 91 * TILE, patrolRight: 94 * TILE }),
+        new PatrolEnemy(100 * TILE,  5 * TILE,  map, TILE, { speed: 4, patrolLeft: 100 * TILE, patrolRight: 103 * TILE }),
+
+        // Zone 5 — sky fortress upper road
+        new PatrolEnemy(113 * TILE,  3 * TILE,  map, TILE, { speed: 3.5, patrolLeft: 111 * TILE, patrolRight: 117 * TILE }),
+        new PatrolEnemy(118 * TILE,  3 * TILE,  map, TILE, { speed: 4, patrolLeft: 116 * TILE, patrolRight: 122 * TILE }),
+        new PatrolEnemy(126 * TILE,  3 * TILE,  map, TILE, { speed: 6.0, patrolLeft: 124 * TILE, patrolRight: 130 * TILE }),
+
+        // Zone 6 — final sprint double-guard
+        new PatrolEnemy(137 * TILE, 9 * TILE, map, TILE, { speed: 6.0, patrolLeft: 136 * TILE, patrolRight: 141 * TILE }),
+        new PatrolEnemy(144 * TILE, 3 * TILE, map, TILE, { speed: 7.0, patrolLeft: 143 * TILE, patrolRight: 147 * TILE }),
     ];
 
     return { coins, boxes, stars, enemies };

@@ -3,7 +3,7 @@ import { createMap } from "../world/levels/level1.js";
 import { JumperEnemy, PatrolEnemy } from "../entities/enemy.js";
 import { getLevelProgress, isLevelPlayable } from "../system/progress.js";
 
-const TOTAL_LEVELS = 6;
+const TOTAL_LEVELS = 8;
 const VISIBLE_LEVELS = 3;
 const TILE = 64;
 

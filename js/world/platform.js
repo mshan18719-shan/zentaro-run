@@ -490,3 +490,83 @@ export function createPlatformsLevel4(TILE) {
         ],
     };
 }
+
+export function createPlatformsLevel5(TILE) {
+    return {
+        bridges: [
+            // ── Zone 2: Bridge over Gap 1 (cols 20-24) ──────────────────
+            // Moves sideways, player must time the jump onto it
+            new MovingBridge(79 * TILE, 4 * TILE, { axis: "x", range: 3 * TILE, speed: 3.0 }),
+            new MovingBridge(86 * TILE, 9 * TILE, { axis: "y", range: 3 * TILE, speed: 1.3, startOffset: 0.6 }),
+            new MovingBridge(90 * TILE, 4 * TILE, { axis: "x", range: 3 * TILE, speed: 3.5 }),
+
+        ],
+        bobs: [
+            new MetalBob(111 * TILE, 8 * TILE, { axis: "y", range: 3 * TILE, speed: 2.5, startOffset: 0.2 }),
+            new MetalBob(119 * TILE, 3 * TILE, { axis: "y", range: 7 * TILE, speed: 4.5, startOffset: 0.5 }),
+            new MetalBob(127 * TILE, 3 * TILE, { axis: "y", range: 7 * TILE, speed: 5.5, startOffset: 0.3 }),
+        ],
+    };
+}
+
+export function createPlatformsLevel6(TILE) {
+    return {
+        bridges: [
+            // ── Zone 2: Bridge over Gap 1 (cols 20-24) ──────────────────
+             // Bridge 1 slides over the left half of the river gap
+            new MovingBridge(29 * TILE, 10 * TILE, { axis: "x", range: 4 * TILE, speed: 2.8, startOffset: 0.0 }),
+            // Bridge 2 slides over the right half — player must hop between them
+            new MovingBridge(43 * TILE, 5 * TILE, { axis: "x", range: 4 * TILE, speed: 3.2, startOffset: 0.5 }),
+
+            new MovingBridge(94 * TILE, 9 * TILE, { axis: "y", range: 3 * TILE, speed: 2.5, startOffset: 0.3 }),
+            new MovingBridge(97 * TILE, 11 * TILE, { axis: "x", range: 4 * TILE, speed: 3.2, startOffset: 0.5 }),
+
+             // ── Zone 6: Final Sprint — last moving bridge over black hole pit ──
+            new MovingBridge(139 * TILE, 3 * TILE, { axis: "x", range: 3 * TILE, speed: 4.5, startOffset: 0.0 }),
+
+        ],
+        bobs: [
+            // ── Zone 1: Descent Alley — sweeps across the first ledge staircase ──
+            new MetalBob(  9 * TILE,  5 * TILE, { axis: "x", range: 5 * TILE, speed: 3.5, startOffset: 0.0 }),
+ 
+            // ── Zone 3: Labyrinth — vertical bob in the narrow corridor entrance ──
+            new MetalBob( 62 * TILE,  6 * TILE, { axis: "y", range: 3 * TILE, speed: 3.0, startOffset: 0.4 }),
+            // Horizontal sweep across the upper labyrinth path
+            new MetalBob( 57 * TILE,  5 * TILE, { axis: "x", range: 4 * TILE, speed: 4.0, startOffset: 0.2 }),
+ 
+            // ── Zone 4: Black Hole Valley — three vertical bobs patrol the void ──
+            // Tight vertical patrol over floating platform 1
+            // Wide patrol guarding the highest platform
+            new MetalBob( 96 * TILE,  0 * TILE, { axis: "y", range: 5 * TILE, speed: 5.5, startOffset: 0.5 }),
+ 
+            // ── Zone 5: Sky Fortress — three vertical bobs guard drop-slots ──
+            new MetalBob(116 * TILE,  4 * TILE, { axis: "y", range: 7 * TILE, speed: 5.0, startOffset: 0.0 }),
+            new MetalBob(124 * TILE,  4 * TILE, { axis: "y", range: 7 * TILE, speed: 5.5, startOffset: 0.35 }),
+            new MetalBob(132 * TILE,  4 * TILE, { axis: "y", range: 7 * TILE, speed: 6.0, startOffset: 0.7 }),
+ 
+            // ── Zone 6: Final Sprint — horizontal sweep over the spike field ──
+            new MetalBob(137 * TILE,  7 * TILE, { axis: "x", range: 5 * TILE, speed: 5.5, startOffset: 0.1 }),
+        ],
+    };
+}
+
+
+export function createPlatformsLevel7(TILE) {
+    return {
+        bridges: [
+            // ── Zone 2: Checkerboard Hell — two horizontal bridges ──────────────
+            // Bridge 1 reaches from zone entry to shelf 1 (over water+void mix)
+            new MovingBridge(25 * TILE, 11 * TILE, { axis: "x", range: 6 * TILE, speed: 3.0, startOffset: 0.0 }),
+        ],
+        bobs: [
+            // ── Zone 2: Checkerboard — vertical bob over the high bait shelf ─────
+            // new MetalBob(39 * TILE,  0 * TILE, { axis: "y", range: 4 * TILE, speed: 4.0, startOffset: 0.2 }),
+
+            // ── Zone 4: Bridge-Only Void — three vertical bobs in the void ───────
+            // Staggered phases so they don't align — player can never predict safe gaps
+            // new MetalBob( 89 * TILE,  4 * TILE, { axis: "y", range: 6 * TILE, speed: 5.0, startOffset: 0.0 }),
+            // new MetalBob( 96 * TILE,  2 * TILE, { axis: "y", range: 8 * TILE, speed: 5.5, startOffset: 0.33 }),
+            // new MetalBob(103 * TILE,  4 * TILE, { axis: "y", range: 6 * TILE, speed: 6.0, startOffset: 0.66 }),
+        ],
+    };
+}
