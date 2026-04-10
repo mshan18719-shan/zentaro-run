@@ -27,7 +27,7 @@ export const sceneState = {
     },
 
     saveLevelStars() {
-        // No-op: stars are saved by progress.js completeLevel()
+        // ! No-op: stars are saved by progress.js completeLevel()
     },
 
     isLevelUnlocked(lvl) {
@@ -147,7 +147,7 @@ export class MainMenuScene {
         // pixel offsets — those were the root cause of the overflow.
         const REF_VW  = 1280;
         const REF_VH  = 720;
-        const refDrawW = REF_VW * 0.86 + 200;   // ≈ 1122  (original desktop intent)
+        const refDrawW = REF_VW * 0.96 + 200;   // ≈ 1122  (original desktop intent)
         const refDrawH = (REF_VW * 0.83) / ar + 70;
 
         const drawW = refDrawW * s;
@@ -155,7 +155,7 @@ export class MainMenuScene {
 
         // Always anchored to the top-left corner, same as the original.
         ctx.save();
-        ctx.drawImage(img, 0, 0, drawW, drawH);
+        ctx.drawImage(img, 22, 0, drawW, drawH);
         ctx.restore();
     }
 
