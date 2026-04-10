@@ -78,6 +78,11 @@ export class Player {
 
         // Phase 12: pre-allocate pickup bounds object to avoid GC per frame
         this._pickupBounds = { x: 0, y: 0, width: 0, height: 0 };
+
+        // 360° flip on jump: tracks rotation angle (degrees) during the rising arc.
+        // Spins 0→360 while velY < 0, then locks at 0 before the player falls.
+        this.flipAngle = 0;       // current rotation in degrees (0 = upright)
+        this._wasJumping = false; // tracks jump-start edge to reset angle
     }
 
     update() {
@@ -135,6 +140,30 @@ export class Player {
         this.moveY();
         this.isJumping = !this.onGround;
         this.checkHazards();
+
+        // ── 360° Flip ─────────────────────────────────────────────────────
+        // The flip only runs during the RISING arc (velY < 0) and only when
+        // airborne (not on a bridge).  Once the player peaks or has already
+        // completed a full rotation the angle is snapped to 0 so the sprite
+        // is always upright when falling and on landing.
+        const inAirForFlip = this.isJumping && !this.onBridge;
+
+        if (!this._wasJumping && inAirForFlip) {
+            // Fresh jump — reset the spin
+            this.flipAngle = 0;
+        }
+
+        if (inAirForFlip && this.velY < 0 && this.flipAngle < 360) {
+            // Spin speed: complete 360° over the natural rising duration.
+            // jumpForce = -14, gravity = 0.55 → ~25 frames to apex.
+            // 360 / 25 ≈ 14.4 deg/frame — feels snappy and visible.
+            this.flipAngle = Math.min(360, this.flipAngle + 14.5);
+        } else if (!inAirForFlip || this.velY >= 0) {
+            // Landed or descending — snap back to upright
+            this.flipAngle = 0;
+        }
+
+        this._wasJumping = inAirForFlip;
 
         // ── Animation ─────────────────────────────────────────────────────
         // isJumping is true when not on ground, but if the player is riding
@@ -399,6 +428,20 @@ export class Player {
         const finalX = Math.round(anchorX - SPRITE_W / 2 + (frame.ox || 0));
         const finalY = Math.round(anchorY - SPRITE_H + (frame.oy || 0));
 
+        // ── Flip rotation setup ───────────────────────────────────────────
+        // Rotate around the sprite's visual centre.  We use ctx.save/restore
+        // here specifically for the rotation transform — the caller still owns
+        // imageSmoothingEnabled so nothing else changes.
+        const spriteFlipping = this.flipAngle !== 0;
+        if (spriteFlipping) {
+            ctx.save();
+            const cx = anchorX;              // horizontal centre of sprite
+            const cy = Math.round(anchorY - SPRITE_H / 2); // vertical centre
+            ctx.translate(cx, cy);
+            ctx.rotate((this.flipAngle * Math.PI) / 180);
+            ctx.translate(-cx, -cy);
+        }
+
         // Phase 12: no ctx.save/restore — caller sets imageSmoothingEnabled = false
         if (this.facing === -1) {
             ctx.transform(-1, 0, 0, 1, anchorX * 2, 0);
@@ -417,5 +460,7 @@ export class Player {
                 finalX, finalY, SPRITE_W, SPRITE_H
             );
         }
+
+        if (spriteFlipping) ctx.restore();
     }
 }
