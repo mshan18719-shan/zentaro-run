@@ -211,10 +211,10 @@ export class MovingBridge {
             // This is the key fix: we snap AFTER any deltaY carry so there is
             // never a gap between the player's feet and the bridge top.
             player.x += this._deltaX;
-            player.y  = bTop - player.height;   // pixel-perfect flush snap every frame
+            player.y = bTop - player.height;   // pixel-perfect flush snap every frame
 
             // Keep player grounded so jumping still works
-            player.velY    = 0;
+            player.velY = 0;
             player.onGround = true;
             player.jumpsLeft = 2;
 
@@ -442,7 +442,7 @@ export function createPlatformsLevel3(TILE) {
         ],
         bobs: [
             // ── Zone 1: Low horizontal sweep over spike field ────────────
-            new MetalBob( 20 * TILE,  0 * TILE, { axis: "y", range: 4 * TILE, speed: 3.5, startOffset: 0.5 }),
+            new MetalBob(20 * TILE, 0 * TILE, { axis: "y", range: 4 * TILE, speed: 3.5, startOffset: 0.5 }),
         ],
     };
 }
@@ -490,34 +490,34 @@ export function createPlatformsLevel6(TILE) {
             // Bridge 2 slides over the right half — player must hop between them
             new MovingBridge(43 * TILE, 5 * TILE, { axis: "x", range: 4 * TILE, speed: 3.2, startOffset: 0.5 }),
 
-            new MovingBridge(94 * TILE, 9 * TILE, { axis: "y", range: 3 * TILE, speed: 2.5, startOffset: 0.3 }),
+            // new MovingBridge(94 * TILE, 9 * TILE, { axis: "y", range: 3 * TILE, speed: 2.5, startOffset: 0.3 }),
+            // new MovingBridge(88 * TILE, 8 * TILE, { axis: "y", range: 5 * TILE, speed: 1.2, startOffset: 0.3 }),
+            new MovingBridge(90 * TILE, 11 * TILE, { axis: "x", range: 4 * TILE, speed: 3.2, startOffset: 0.5 }),
             new MovingBridge(97 * TILE, 11 * TILE, { axis: "x", range: 4 * TILE, speed: 3.2, startOffset: 0.5 }),
 
-             // ── Zone 6: Final Sprint — last moving bridge over black hole pit ──
+            // ── Zone 6: Final Sprint — last moving bridge over black hole pit ──
             new MovingBridge(139 * TILE, 3 * TILE, { axis: "x", range: 3 * TILE, speed: 4.5, startOffset: 0.0 }),
 
         ],
         bobs: [
             // ── Zone 1: Descent Alley — sweeps across the first ledge staircase ──
-            new MetalBob(  9 * TILE,  5 * TILE, { axis: "x", range: 5 * TILE, speed: 3.5, startOffset: 0.0 }),
- 
+            new MetalBob(9 * TILE, 5 * TILE, { axis: "x", range: 5 * TILE, speed: 3.5, startOffset: 0.0 }),
+
             // ── Zone 3: Labyrinth — vertical bob in the narrow corridor entrance ──
-            new MetalBob( 62 * TILE,  6 * TILE, { axis: "y", range: 3 * TILE, speed: 3.0, startOffset: 0.4 }),
+            new MetalBob(62 * TILE, 5 * TILE, { axis: "y", range: 2 * TILE, speed: 2.0, startOffset: 0.4 }),
             // Horizontal sweep across the upper labyrinth path
-            new MetalBob( 57 * TILE,  5 * TILE, { axis: "x", range: 4 * TILE, speed: 4.0, startOffset: 0.2 }),
- 
+            new MetalBob(57 * TILE, 5 * TILE, { axis: "x", range: 4 * TILE, speed: 4.0, startOffset: 0.2 }),
+
             // ── Zone 4: Black Hole Valley — three vertical bobs patrol the void ──
-            // Tight vertical patrol over floating platform 1
-            // Wide patrol guarding the highest platform
-            new MetalBob( 96 * TILE,  0 * TILE, { axis: "y", range: 5 * TILE, speed: 5.5, startOffset: 0.5 }),
- 
+            new MetalBob(96 * TILE, 0 * TILE, { axis: "y", range: 5 * TILE, speed: 5.5, startOffset: 0.5 }),
+
             // ── Zone 5: Sky Fortress — three vertical bobs guard drop-slots ──
-            new MetalBob(116 * TILE,  4 * TILE, { axis: "y", range: 7 * TILE, speed: 5.0, startOffset: 0.0 }),
-            new MetalBob(124 * TILE,  4 * TILE, { axis: "y", range: 7 * TILE, speed: 5.5, startOffset: 0.35 }),
-            new MetalBob(132 * TILE,  4 * TILE, { axis: "y", range: 7 * TILE, speed: 6.0, startOffset: 0.7 }),
- 
+            new MetalBob(116 * TILE, 5 * TILE, { axis: "y", range: 6 * TILE, speed: 5.0, startOffset: 0.0 }),
+            new MetalBob(124 * TILE, 5 * TILE, { axis: "y", range: 6 * TILE, speed: 5.5, startOffset: 0.35 }),
+            new MetalBob(132 * TILE, 5 * TILE, { axis: "y", range: 6 * TILE, speed: 6.0, startOffset: 0.7 }),
+
             // ── Zone 6: Final Sprint — horizontal sweep over the spike field ──
-            new MetalBob(137 * TILE,  7 * TILE, { axis: "x", range: 5 * TILE, speed: 5.5, startOffset: 0.1 }),
+            new MetalBob(137 * TILE, 7 * TILE, { axis: "x", range: 5 * TILE, speed: 5.5, startOffset: 0.1 }),
         ],
     };
 }
@@ -530,11 +530,11 @@ export function createPlatformsLevel7(TILE) {
         ],
         bobs: [
             // ── Zone 2: Checkerboard — vertical bob over the high bait shelf ─────
-            new MetalBob(39 * TILE,  6 * TILE, { axis: "y", range: 4 * TILE, speed: 4.0, startOffset: 0.2 }),
+            new MetalBob(39 * TILE, 6 * TILE, { axis: "y", range: 4 * TILE, speed: 4.0, startOffset: 0.2 }),
             // Staggered phases so they don't align — player can never predict safe gaps
-            new MetalBob( 89 * TILE,  4 * TILE, { axis: "y", range: 6 * TILE, speed: 5.0, startOffset: 0.0 }),
-            new MetalBob( 96 * TILE,  2 * TILE, { axis: "y", range: 8 * TILE, speed: 5.5, startOffset: 0.33 }),
-            new MetalBob(103 * TILE,  4 * TILE, { axis: "y", range: 6 * TILE, speed: 6.0, startOffset: 0.66 }),
+            new MetalBob(89 * TILE, 4 * TILE, { axis: "y", range: 6 * TILE, speed: 5.0, startOffset: 0.0 }),
+            new MetalBob(96 * TILE, 2 * TILE, { axis: "y", range: 8 * TILE, speed: 5.5, startOffset: 0.33 }),
+            new MetalBob(103 * TILE, 4 * TILE, { axis: "y", range: 6 * TILE, speed: 6.0, startOffset: 0.66 }),
         ],
     };
 }
@@ -549,8 +549,8 @@ export function createPlatformsLevel8(TILE) {
         bobs: [
 
             // * ── Zone 5: Spike Corridor ─────────────────────────────────────────
-            new MetalBob(102 * TILE, 10 * TILE, { axis: "x", range: 8 * TILE, speed: 3.5, startOffset: 0.0  }),
-            new MetalBob(109 * TILE, 10 * TILE, { axis: "x", range: 8 * TILE, speed: 3.5, startOffset: 0.5  }),
+            new MetalBob(102 * TILE, 10 * TILE, { axis: "x", range: 8 * TILE, speed: 3.5, startOffset: 0.0 }),
+            new MetalBob(109 * TILE, 10 * TILE, { axis: "x", range: 8 * TILE, speed: 3.5, startOffset: 0.5 }),
 
             // * ── Zone 6: Sky Pillars ────────────────────────────────────────────
             new MetalBob(129 * TILE, 2 * TILE, { axis: "y", range: 9 * TILE, speed: 5.0, startOffset: 0.6 }),

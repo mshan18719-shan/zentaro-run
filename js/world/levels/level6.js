@@ -1,21 +1,4 @@
-// ══════════════════════════════════════════════════════════════
 //  world/levels/level6.js  —  "The Gauntlet"
-//  The ultimate final level. Six brutal zones:
-//
-//  Zone 1 (cols 0–25)   : Descent Alley — cascading upper ledges +
-//                          spiked staircase forcing careful drop-downs.
-//  Zone 2 (cols 26–55)  : River of Doom — wide water crossing with
-//                          moving bridges and vertical metal bobs.
-//  Zone 3 (cols 56–85)  : The Labyrinth — tall walls, locked corridors,
-//                          spike ceilings, forced tight navigation.
-//  Zone 4 (cols 86–110) : Black Hole Valley — floor replaced by black
-//                          holes, only floating platforms + moving bridges
-//                          to cross. Metal bobs patrol the air.
-//  Zone 5 (cols 111–135): Sky Fortress — elevated upper road + lower
-//                          ground pits, cross between them via narrow gaps.
-//  Zone 6 (cols 136–149): Final Sprint — dense enemy gauntlet with
-//                          spike floor, one last moving bridge to the door.
-// ══════════════════════════════════════════════════════════════
 
 import { FlyEnemy, WalkerEnemy, JumperEnemy, PatrolEnemy } from "../../entities/enemy.js";
 import { Coin, TreasureBox, Star } from "../../entities/coin.js";
@@ -27,9 +10,6 @@ export const DOOR = { col: 148, midRow: 13, topRow: 12 };
 // ── Platform factory ──────────────────────────────────────────
 export { createPlatformsLevel6 as createLevelPlatforms };
 
-// ══════════════════════════════════════════════════════════════
-//  MAP
-// ══════════════════════════════════════════════════════════════
 export function createMap() {
     const rows = 15;
     const cols = 150;
@@ -39,11 +19,7 @@ export function createMap() {
     // ── Ground floor (standard, will be overridden in hazard zones) ─
     for (let x = 0; x < cols; x++) map[14][x] = 1;
 
-    // ════════════════════════════════════════════════════════════
-    //  ZONE 1 — Descent Alley  (cols 0–25)
-    //  Three cascading upper ledges force the player down through
-    //  spike layers. Miss a ledge → land on spikes.
-    // ════════════════════════════════════════════════════════════
+    // * ZONE 1 — Descent Alley  (cols 0–25)
 
     // Starting board + big cactus
     map[12][1] = 12;
@@ -71,11 +47,7 @@ export function createMap() {
     for (let y = 0; y <= 8; y++) map[y][25] = 8;
     for (let y = 0; y <= 8; y++) map[y][26] = 8;
 
-    // ════════════════════════════════════════════════════════════
-    //  ZONE 2 — River of Doom  (cols 27–55)
-    //  Wide water gap. Only moving bridges + two stone islands.
-    //  Spikes line both banks.
-    // ════════════════════════════════════════════════════════════
+    // * ZONE 2 — River of Doom  (cols 27–55)
 
     // Replace ground with water for the whole zone
     for (let x = 27; x <= 54; x++) map[14][x] = 3;  // water tile (top)
@@ -97,49 +69,32 @@ export function createMap() {
     map[9][55] = 1;
     for (let y = 10; y <= 14; y++) map[y][55] = 8;  // right bank wall
 
-    // ════════════════════════════════════════════════════════════
-    //  ZONE 3 — The Labyrinth  (cols 56–85)
-    //  Long walls create narrow corridors. Spike ceilings in tight
-    //  passages. Enemies patrol the hallways.
-    // ════════════════════════════════════════════════════════════
+    // * ZONE 3 — The Labyrinth  (cols 56–85)
 
     // Corridor 1: low ceiling passageway (rows 10–14, cols 56–65)
     for (let x = 56; x <= 66; x++) map[10][x] = 1;  // ceiling
     for (let x = 57; x <= 64; x++) map[11][x] = 15; // spike ceiling (under the floor above)
     // Right wall sealing corridor 1
     map[11][65] = 8; map[11][66] = 8;
-    // for (let y = 10; y <= 14; y++) map[y][66] = 8;
 
     // Upper path above corridor 1
     for (let x = 56; x <= 66; x++) map[4][x] = 1;
     map[5][56] = 15; map[5][65] = 15;  // spike hazards on upper path
 
-    // Vertical connector — gap players must fall through
-    // (no tiles at col 67, forcing a blind drop)
-
     // Corridor 2: mid height (rows 7–9, cols 68–78)
     for (let x = 69; x <= 78; x++) map[7][x] = 1;   // upper wall
     for (let x = 72; x <= 78; x++) map[9][x] = 1;   // lower wall (narrow gap)
-    map[8][78] = 15;                // spike gates on each end
+    map[8][78] = 15;
 
     // Wall sealing corridor 2 on the right
     for (let y = 0; y <= 9; y++) map[y][78] = 8;
     for (let y = 0; y <= 9; y++) map[y][79] = 8;
+    for (let x = 76; x <= 79; x++) map[10][x] = 15;
 
     // High reward shelf
     for (let x = 80; x <= 84; x++) map[3][x] = 1;
 
-    // Decorations in labyrinth
-    map[9][57] = 9;   // rock
-    map[12][71] = 13;  // crystal
-    map[6][81] = 16;  // grass on high shelf
-
-    // ════════════════════════════════════════════════════════════
-    //  ZONE 4 — Black Hole Valley  (cols 86–110)
-    //  Entire floor replaced by black holes. Three floating platforms
-    //  (stepped: high→mid→low→mid→high). Moving bridges span the gaps.
-    //  Metal bobs patrol vertically. Most dangerous zone.
-    // ════════════════════════════════════════════════════════════
+    // * ZONE 4 — Black Hole Valley  (cols 86–110)
 
     for (let x = 85; x <= 110; x++) map[14][x] = 25; // black hole floor
 
@@ -159,15 +114,9 @@ export function createMap() {
     map[12][108] = 15; map[12][110] = 15;
 
     // Crystal & big-cactus visible near the black hole edge
-    map[8][85] = 13;  // crystal
     map[12][84] = 7;   // big cactus silhouette before void
 
-    // ════════════════════════════════════════════════════════════
-    //  ZONE 5 — Sky Fortress  (cols 111–135)
-    //  Two roads: upper road (rows 3–4) and lower ground (row 14).
-    //  Narrow vertical slots players must drop through to switch
-    //  between roads. Spike pits guard the lower road.
-    // ════════════════════════════════════════════════════════════
+    // * ZONE 5 — Sky Fortress  (cols 111–135)
 
     // Lower ground restored here
     for (let x = 111; x <= 149; x++) map[14][x] = 1;
@@ -219,7 +168,7 @@ export function createMap() {
 // ══════════════════════════════════════════════════════════════
 export function createLevelEntities(map, TILE, player) {
 
-    // ── Coins ─────────────────────────────────────────────────
+    // * ── Coins ─────────────────────────────────────────────────
     const coinDefs = [
         // Zone 1 — descent ledges
         { col: 2, row: 4 }, { col: 4, row: 4 }, { col: 6, row: 4 },
@@ -229,15 +178,15 @@ export function createLevelEntities(map, TILE, player) {
 
         // Zone 2 — river crossing
         { col: 33, row: 10 }, { col: 34, row: 10 },
-        { col: 38, row: 6 }, { col: 39, row: 6 },
+        { col: 37, row: 6 }, { col: 38, row: 6 }, { col: 39, row: 6 },
         { col: 44, row: 10 }, { col: 45, row: 10 },
-        { col: 48, row: 11 }, { col: 50, row: 11 }, { col: 52, row: 11 },
+        { col: 48, row: 4 }, { col: 50, row: 4 }, { col: 52, row: 4 },
 
         // Zone 3 — labyrinth corridors
         { col: 58, row: 9 }, { col: 60, row: 9 }, { col: 62, row: 9 },
         { col: 58, row: 2 }, { col: 60, row: 2 }, { col: 63, row: 2 },
         { col: 70, row: 5 }, { col: 72, row: 5 }, { col: 74, row: 5 },
-        { col: 71, row: 10 }, { col: 73, row: 10 },
+        { col: 71, row: 11 }, { col: 73, row: 11 },
         { col: 81, row: 1 }, { col: 82, row: 1 }, { col: 83, row: 1 },
 
         // Zone 4 — black hole valley
@@ -265,8 +214,7 @@ export function createLevelEntities(map, TILE, player) {
         new Coin(col * TILE + (TILE - 28) / 2, row * TILE - 32)
     );
 
-    // ── Treasure Boxes ────────────────────────────────────────
-    // Clustered in the most dangerous spots — reward for bravery
+    // * ── Treasure Boxes ────────────────────────────────────────
     const boxes = [
         // Zone 1 — top of the descent, guarded by spike corridor
         new TreasureBox(2, 5, TILE, (pts) => { player.score += pts; }),
@@ -282,15 +230,14 @@ export function createLevelEntities(map, TILE, player) {
         new TreasureBox(134, 3, TILE, (pts) => { player.score += pts; }),
     ];
 
-    // ── Stars ─────────────────────────────────────────────────
-    // Three stars placed in truly punishing spots
+    // * ── Stars ─────────────────────────────────────────────────
     const stars = [
         new Star(38 * TILE, 5 * TILE - 64),   // Zone 2 — elevated river platform
         new Star(97 * TILE, 1 * TILE - 64),   // Zone 4 — top of the void
         new Star(133 * TILE - 10, 1 * TILE - 64),   // Zone 5 — fortress summit
     ];
 
-    // ── Enemies ───────────────────────────────────────────────
+    // * ── Enemies ───────────────────────────────────────────────
     const groundY = (map.length - 1) * TILE;
     const enemies = [
 
@@ -310,8 +257,6 @@ export function createLevelEntities(map, TILE, player) {
 
         // ── JumperEnemies — unpredictable launch threats ─────────
         new JumperEnemy(  8 * TILE, groundY,      map, TILE, { jumpForce: -18, jumpInterval: 40 }),
-        new JumperEnemy( 59 * TILE, 9  * TILE,    map, TILE, { jumpForce: -15, jumpInterval: 35 }),
-        new JumperEnemy( 74 * TILE, 8  * TILE,    map, TILE, { jumpForce: -16, jumpInterval: 45 }),
         new JumperEnemy( 87 * TILE, 8  * TILE,    map, TILE, { jumpForce: -18, jumpInterval: 50 }),
         new JumperEnemy(106 * TILE, 8  * TILE,    map, TILE, { jumpForce: -18, jumpInterval: 50 }),
         new JumperEnemy(120 * TILE, groundY, map, TILE, { jumpForce: -20, jumpInterval: 35 }),
@@ -341,7 +286,7 @@ export function createLevelEntities(map, TILE, player) {
 
         // Zone 6 — final sprint double-guard
         new PatrolEnemy(137 * TILE, 9 * TILE, map, TILE, { speed: 6.0, patrolLeft: 136 * TILE, patrolRight: 141 * TILE }),
-        new PatrolEnemy(144 * TILE, 3 * TILE, map, TILE, { speed: 7.0, patrolLeft: 143 * TILE, patrolRight: 147 * TILE }),
+        new PatrolEnemy(144 * TILE, 3 * TILE, map, TILE, { speed: 7.0, patrolLeft: 143 * TILE, patrolRight: 149 * TILE }),
     ];
 
     return { coins, boxes, stars, enemies };

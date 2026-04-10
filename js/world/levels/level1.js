@@ -77,7 +77,7 @@ export function createMap() {
 
     // Cactus decorations
     map[12][13] = 6; map[12][28] = 6; map[12][47] = 6;
-    map[6][56] = 6;  map[12][63] = 6; map[12][123] = 6;
+    map[6][56] = 6; map[12][63] = 6; map[12][123] = 6;
 
     // Rocks
     map[12][14] = 9; map[12][54] = 9; map[12][78] = 9; map[12][98] = 9;
@@ -107,26 +107,27 @@ export function createLevelEntities(map, TILE, player) {
         { col: 34, row: 12 }, { col: 35, row: 12 }, { col: 36, row: 12 },
         { col: 44, row: 12 }, { col: 45, row: 12 }, { col: 46, row: 12 },
         { col: 51, row: 12 }, { col: 52, row: 12 },
-        { col: 47, row: 7 },  { col: 49, row: 7 },  { col: 51, row: 7 },
-        { col: 53, row: 7 },  { col: 55, row: 7 },
+        { col: 47, row: 7 }, { col: 49, row: 7 }, { col: 51, row: 7 },
+        { col: 53, row: 7 }, { col: 55, row: 7 },
         { col: 62, row: 12 }, { col: 63, row: 12 }, { col: 64, row: 12 },
         { col: 65, row: 12 }, { col: 73, row: 12 }, { col: 74, row: 12 },
         { col: 75, row: 12 }, { col: 76, row: 12 },
-        { col: 21, row: 7 },  { col: 22, row: 7 },  { col: 23, row: 7 },
-        { col: 31, row: 5 },  { col: 32, row: 5 },  { col: 33, row: 5 },
+        { col: 21, row: 7 }, { col: 22, row: 7 }, { col: 23, row: 7 },
+        { col: 31, row: 5 }, { col: 32, row: 5 }, { col: 33, row: 5 },
         { col: 83, row: 10 }, { col: 84, row: 10 }, { col: 85, row: 10 },
         { col: 86, row: 10 },
-        { col: 65, row: 5 },  { col: 66, row: 5 },
-        { col: 64, row: 6 },  { col: 65, row: 6 },  { col: 66, row: 6 },
-        { col: 67, row: 6 },  { col: 74, row: 5 },  { col: 75, row: 5 },
-        { col: 73, row: 6 },  { col: 74, row: 6 },  { col: 75, row: 6 },
-        { col: 76, row: 6 },  { col: 90, row: 12 }, { col: 91, row: 12 },
+        { col: 65, row: 5 }, { col: 66, row: 5 },
+        { col: 64, row: 6 }, { col: 65, row: 6 }, { col: 66, row: 6 },
+        { col: 67, row: 6 }, { col: 74, row: 5 }, { col: 75, row: 5 },
+        { col: 73, row: 6 }, { col: 74, row: 6 }, { col: 75, row: 6 },
+        { col: 76, row: 6 }, { col: 88, row: 4 }, { col: 88, row: 6 },
         // Extended section
-        { col: 102, row: 10 }, { col: 103, row: 10 },
-        { col: 109, row: 8 },  { col: 110, row: 8 },
-        { col: 114, row: 6 },  { col: 115, row: 6 },
+        { col: 97, row: 7 }, { col: 97, row: 5 }, { col: 99, row: 7 }, { col: 99, row: 5 },
+        { col: 97, row: 3 }, { col: 99, row: 3 },
+        { col: 109, row: 8 }, { col: 110, row: 8 },
+        { col: 114, row: 6 }, { col: 115, row: 6 },
         { col: 122, row: 12 }, { col: 123, row: 12 }, { col: 124, row: 12 },
-        { col: 129, row: 4 },  { col: 130, row: 4 },  { col: 131, row: 4 },
+        { col: 129, row: 4 }, { col: 130, row: 4 }, { col: 131, row: 4 },
         { col: 133, row: 12 }, { col: 134, row: 12 },
     ];
     const coins = coinDefs.map(({ col, row }) =>
@@ -147,21 +148,22 @@ export function createLevelEntities(map, TILE, player) {
     const groundY = (map.length - 1) * TILE;
     const enemies = [
         new FlyEnemy(50 * TILE, 10 * TILE, map, TILE, { speed: 2, floatAmplitude: 28, floatSpeed: 0.04 }),
-        new FlyEnemy(70 * TILE, 6 * TILE,  map, TILE, { speed: 2, floatAmplitude: 28, floatSpeed: 0.04 }),
+        new FlyEnemy(70 * TILE, 6 * TILE, map, TILE, { speed: 2, floatAmplitude: 28, floatSpeed: 0.04 }),
         new FlyEnemy(120 * TILE, 10 * TILE, map, TILE, { speed: 2, floatAmplitude: 28, floatSpeed: 0.04 }),
 
         new WalkerEnemy(30 * TILE, groundY, map, TILE, { speed: 1.8, dir: -1 }),
         new WalkerEnemy(80 * TILE, groundY, map, TILE, { speed: 1.8, dir: -1 }),
-        new WalkerEnemy(115 * TILE, groundY, map, TILE, { speed: 2,   dir: -1 }),
+        new WalkerEnemy(115 * TILE, groundY, map, TILE, { speed: 2, dir: -1 }),
 
-        new JumperEnemy(30 * TILE, groundY,      map, TILE, { jumpForce: -13, jumpInterval: 120 }),
-        new JumperEnemy(45 * TILE, TILE * 7,     map, TILE, { jumpForce: -13, jumpInterval: 120 }),
-        new JumperEnemy(70 * TILE, groundY,      map, TILE, { jumpForce: -13, jumpInterval: 150 }),
-        new JumperEnemy(110 * TILE, TILE * 4,    map, TILE, { jumpForce: -13, jumpInterval: 130 }),
+        new JumperEnemy(30 * TILE, groundY, map, TILE, { jumpForce: -13, jumpInterval: 120 }),
+        new JumperEnemy(45 * TILE, TILE * 7, map, TILE, { jumpForce: -13, jumpInterval: 120 }),
+        new JumperEnemy(70 * TILE, groundY, map, TILE, { jumpForce: -13, jumpInterval: 150 }),
+        new JumperEnemy(97 * TILE, 8 * TILE, map, TILE, { jumpForce: -13, jumpInterval: 150 }),
+        new JumperEnemy(110 * TILE, TILE * 4, map, TILE, { jumpForce: -13, jumpInterval: 130 }),
 
-        new PatrolEnemy(32 * TILE, 6 * TILE,  map, TILE, { speed: 2.5, patrolLeft: 30 * TILE, patrolRight: 35 * TILE }),
-        new PatrolEnemy(21 * TILE, groundY,   map, TILE, { speed: 2,   patrolLeft: 19 * TILE, patrolRight: 25 * TILE }),
-        new PatrolEnemy(65 * TILE, groundY,   map, TILE, { speed: 2,   patrolLeft: 59 * TILE, patrolRight: 70 * TILE }),
+        new PatrolEnemy(32 * TILE, 6 * TILE, map, TILE, { speed: 2.5, patrolLeft: 30 * TILE, patrolRight: 35 * TILE }),
+        new PatrolEnemy(21 * TILE, groundY, map, TILE, { speed: 2, patrolLeft: 19 * TILE, patrolRight: 25 * TILE }),
+        new PatrolEnemy(65 * TILE, groundY, map, TILE, { speed: 2, patrolLeft: 59 * TILE, patrolRight: 70 * TILE }),
         new PatrolEnemy(108 * TILE, 8 * TILE, map, TILE, { speed: 2.5, patrolLeft: 107 * TILE, patrolRight: 117 * TILE }),
     ];
 
