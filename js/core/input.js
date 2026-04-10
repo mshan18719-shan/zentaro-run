@@ -1,11 +1,4 @@
-// ══════════════════════════════════════════════════════════════
-//  input.js  –  Keyboard + touch controls + on-screen control UI
-//  FIXES:
-//   1. Buttons are large enough to tap comfortably on any phone.
-//   2. HUD buttons (volume/pause/panels) now also respond to
-//      touchstart — a shared tap-dispatcher fires canvas "click"
-//      events so main.js click handler works on touch devices.
-// ══════════════════════════════════════════════════════════════
+// * input.js  –  Keyboard + touch controls + on-screen control UI
 
 const keys = {};
 const vKeys = { left: false, right: false, up: false };
@@ -56,13 +49,7 @@ export function resetVirtualKeys() {
     for (const id in touchMap) delete touchMap[id];
 }
 
-// ══════════════════════════════════════════════════════════════
-//  setupTouchControls
-//  Also installs a touchstart→click bridge so that any tap NOT
-//  captured by the movement buttons is re-dispatched as a click
-//  event, enabling the HUD volume/pause/panel buttons to work on
-//  touch screens (main.js only listens to "click").
-// ══════════════════════════════════════════════════════════════
+// *  setupTouchControls
 export function setupTouchControls(canvas, getSceneState, GAME_PLAYING_SCENE) {
     function inRect(x, y, r) {
         return x >= r.x && x <= r.x + r.w && y >= r.y && y <= r.y + r.h;
@@ -130,9 +117,7 @@ export function setupTouchControls(canvas, getSceneState, GAME_PLAYING_SCENE) {
     canvas.addEventListener("mouseup", onUp);
 }
 
-// Fire a real MouseEvent("click") at the given client position.
-// This lets the existing click listener in main.js handle all HUD
-// interaction without duplicating logic.
+// ? Fire a real MouseEvent("click") at the given client position.
 function _fireSyntheticClick(canvas, clientX, clientY) {
     const evt = new MouseEvent("click", {
         bubbles: true,
@@ -144,38 +129,25 @@ function _fireSyntheticClick(canvas, clientX, clientY) {
     canvas.dispatchEvent(evt);
 }
 
-// ══════════════════════════════════════════════════════════════
-//  drawTouchControls
-//  Button size rules (landscape phone / tablet):
-//   • Base size = 22 % of the SHORTER viewport side (vh in
-//     landscape), clamped between 85 px and 150 px.
-//     Larger than before for easier tapping on small phones.
-//   • Jump button = 1.25 × base (bigger target is easier to hit).
-//   • Safe bottom margin is computed so the TALLEST button (jump)
-//     always stays fully on screen — floor is anchored from the
-//     bottom edge of the jump button, not its top.
-//   • Left & Right sit side by side in the bottom-left corner,
-//     vertically centred on the jump button's centre.
-//   • Jump sits in the bottom-right corner.
-// ══════════════════════════════════════════════════════════════
+// * drawTouchControls
 export function drawTouchControls(ctx, vw, vh) {
     const shortSide = Math.min(vw, vh);
 
-    // Your large sizes
+    // * Your large sizes
     const btnSize = Math.round(Math.max(130, Math.min(300, shortSide * 1.67)));
     const jumpSize = Math.round(Math.max(140, Math.min(400, shortSide * 1.99)));
 
-    // Fixed layout anchors
+    // * Fixed layout anchors
     const safeLeft = Math.max(24, Math.round(vw * 0.03));
     const safeRight = Math.max(24, Math.round(vw * 0.03));
     const safeBottom = Math.max(30, Math.round(vh * 0.065));
     const innerGap = Math.round(btnSize * 0.22);
 
-    // Base sizes used only to lock original positions
+    // * Base sizes used only to lock original positions
     const baseBtnSize = 130;
     const baseJumpSize = 140;
 
-    // Fixed centers for buttons
+    // * Fixed centers for buttons
     const leftCX = safeLeft + baseBtnSize / 2;
     const leftCY = vh - safeBottom - baseBtnSize / 2;
 
@@ -185,7 +157,7 @@ export function drawTouchControls(ctx, vw, vh) {
     const jumpCX = vw - safeRight - baseJumpSize / 2;
     const jumpCY = vh - safeBottom - baseJumpSize / 2;
 
-    // Real positions derived from fixed centers
+    // * Real positions derived from fixed centers
     const lx = Math.round(leftCX - btnSize / 2);
     const ly = Math.round(leftCY - btnSize / 2);
 

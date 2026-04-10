@@ -1,8 +1,4 @@
-// ══════════════════════════════════════════════════════════════
-//  camera.js  —  unchanged logic, minor cleanup
-//  Phase 12: no functional changes needed; camera is already tight.
-//  Cleanup: use canvas logical size helper consistently.
-// ══════════════════════════════════════════════════════════════
+// * camera.js  —  unchanged logic, minor cleanup
 
 export class Camera {
     constructor(canvas, map, tileSize) {
@@ -10,14 +6,14 @@ export class Camera {
         this.map      = map;
         this.tileSize = tileSize;
 
-        // ── Phase 13: Responsive scale ────────────────────────────
-        // The game was designed for a ~960×540 "reference" viewport.
-        // On smaller screens we scale down so the same number of tiles
-        // remain visible — instead of tiles appearing huge.
+        // ! ── Phase 13: Responsive scale ────────────────────────────
+        // ! The game was designed for a ~960×540 "reference" viewport.
+        // ! On smaller screens we scale down so the same number of tiles
+        // ! remain visible — instead of tiles appearing huge.
         this.scale = Camera.computeScale();
 
-        // viewW/viewH are the WORLD-SPACE viewport dimensions
-        // (i.e. how many world pixels are visible, = screen / scale).
+        // * viewW/viewH are the WORLD-SPACE viewport dimensions
+        // * (i.e. how many world pixels are visible, = screen / scale).
         this.viewW = window.innerWidth  / this.scale;
         this.viewH = window.innerHeight / this.scale;
 
@@ -34,16 +30,16 @@ export class Camera {
         });
     }
 
-    // ── Static helper: returns a scale factor so the game always
-    //    shows at least REF_W × REF_H world pixels on screen.
-    //    REF dimensions match the desktop design.
+    // ! ── Static helper: returns a scale factor so the game always
+    // !    shows at least REF_W × REF_H world pixels on screen.
+    // !    REF dimensions match the desktop design.
     static computeScale() {
         const REF_W = 960;
         const REF_H = 540;
         const sw = window.innerWidth  / REF_W;
         const sh = window.innerHeight / REF_H;
-        // Use the smaller ratio so the full reference viewport fits.
-        // Clamp to 1 so we never upscale on large monitors (keeps desktop identical).
+        // ! Use the smaller ratio so the full reference viewport fits.
+        // ! Clamp to 1 so we never upscale on large monitors (keeps desktop identical).
         return Math.min(sw, sh, 1);
     }
 

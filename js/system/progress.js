@@ -1,6 +1,6 @@
 const STORAGE_KEY = "madboy_progress";
 
-// Only these levels are actually implemented right now.
+// * Only these levels are actually implemented right now.
 const PLAYABLE_LEVELS = new Set([1, 2, 3, 4, 5, 6, 7, 8]);
 
 function defaultLevel() {
@@ -56,7 +56,7 @@ export function loadProgress() {
 
         const parsed = JSON.parse(raw);
 
-        // Safety merge so broken/old saves do not wipe required structure
+        // todo ==> Safety merge so broken/old saves do not wipe required structure
         if (!parsed || typeof parsed !== "object") {
             const data = defaultProgress();
             localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
@@ -99,7 +99,7 @@ export function getLevelProgress(level = 1) {
     if (!data.levels[lvl]) {
         data.levels[lvl] = defaultLevel();
 
-        // only level 1 should default to unlocked
+        // * only level 1 should default to unlocked
         if (lvl === 1) {
             data.levels[lvl].unlocked = true;
         }
@@ -158,8 +158,7 @@ export function completeLevel(level, score, starsCollected) {
 
     const nextLevel = lvl + 1;
 
-    // IMPORTANT:
-    // Unlock next level only if that level actually exists in game right now.
+    // ! IMPORTANT: Unlock next level only if that level actually exists in game right now.
     if (PLAYABLE_LEVELS.has(nextLevel)) {
         if (!data.levels[nextLevel]) {
             data.levels[nextLevel] = defaultLevel();

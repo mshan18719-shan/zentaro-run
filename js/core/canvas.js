@@ -3,7 +3,7 @@ const ctx = canvas.getContext("2d");
 
 const dpr = window.devicePixelRatio || 1;
 
-// ── Lock viewport (disables browser-level pinch-zoom on mobile) ──
+// * ── Lock viewport (disables browser-level pinch-zoom on mobile) ──
 (function _lockViewport() {
     let meta = document.querySelector("meta[name='viewport']");
     if (!meta) {
@@ -14,7 +14,7 @@ const dpr = window.devicePixelRatio || 1;
     meta.content = "width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no";
 })();
 
-// ── Block all zoom gestures ───────────────────────────────────
+// * ── Block all zoom gestures ───────
 window.addEventListener("wheel", e => {
     if (e.ctrlKey) e.preventDefault();
 }, { passive: false });
@@ -36,11 +36,7 @@ window.addEventListener("touchend", e => {
     _lastTap = now;
 }, { passive: false });
 
-// ══════════════════════════════════════════════════════════════
-//  Rotate-screen overlay
-//  Shows a fullscreen prompt when the device is in portrait mode.
-//  Hides automatically when rotated to landscape.
-// ══════════════════════════════════════════════════════════════
+// ! Rotate-screen overlay
 let _rotateOverlay = null;
 
 function _isTouchDevice() {

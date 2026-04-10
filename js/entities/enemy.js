@@ -1,18 +1,13 @@
-// ══════════════════════════════════════════════════════════════
-//  enemy.js
-//  Phase 12 optimizations:
-//    • Sheet images cached in constructor (no getElementById per draw)
-//    • ctx.save/restore removed from draw() — caller sets imageSmoothingEnabled
-//    • rowIndex toggle replaced with XOR (FlyEnemy)
-//    • Dead-check early return kept at top of update() (skip all math)
-//    • _moveX / _moveY guard added: skip tile loop when velocity is zero
-// ══════════════════════════════════════════════════════════════
+// * Phase 12 optimizations:
+// *   • Sheet images cached in constructor (no getElementById per draw)
+// *   • ctx.save/restore removed from draw() — caller sets imageSmoothingEnabled
+// *   • rowIndex toggle replaced with XOR (FlyEnemy)
+// *   • Dead-check early return kept at top of update() (skip all math)
+// *   • _moveX / _moveY guard added: skip tile loop when velocity is zero
 
 import { isSolid } from "../world/map.js";
 
-// ─────────────────────────────────────────────────────────────
-//  BASE ENEMY
-// ─────────────────────────────────────────────────────────────
+// * BASE ENEMY
 export class Enemy {
     constructor(startX, startY, map, tileSize) {
         this.map = map;
@@ -194,9 +189,7 @@ export class Enemy {
     draw() { }
 }
 
-// ─────────────────────────────────────────────────────────────
-//  FLY ENEMY
-// ─────────────────────────────────────────────────────────────
+// ! FLY ENEMY
 export class FlyEnemy extends Enemy {
     constructor(startX, startY, map, tileSize, opts = {}) {
         super(startX, startY, map, tileSize);
@@ -269,9 +262,7 @@ export class FlyEnemy extends Enemy {
     }
 }
 
-// ─────────────────────────────────────────────────────────────
-//  WALKER ENEMY  (slime)
-// ─────────────────────────────────────────────────────────────
+// * WALKER ENEMY  (slime)
 export class WalkerEnemy extends Enemy {
     constructor(startX, startY, map, tileSize, opts = {}) {
         super(startX, startY, map, tileSize);
@@ -293,13 +284,13 @@ export class WalkerEnemy extends Enemy {
         this.visualOffsetY = -4;
         this.y = startY - this.height;
 
-        // Phase 12: cache sheet once
+        // * Phase 12: cache sheet once
         this._sheet = document.getElementById("slimeSheet0");
     }
 
     update() {
         if (this.dead) return;
-        // Stay frozen until the camera has revealed this enemy
+        // * Stay frozen until the camera has revealed this enemy
         if (!this.activated) return;
 
         this.velX = -this.speed;
@@ -350,9 +341,7 @@ export class WalkerEnemy extends Enemy {
     }
 }
 
-// ─────────────────────────────────────────────────────────────
-//  JUMPER ENEMY  (madblock)
-// ─────────────────────────────────────────────────────────────
+// ? JUMPER ENEMY  (madblock)
 export class JumperEnemy extends Enemy {
     constructor(startX, startY, map, tileSize, opts = {}) {
         super(startX, startY, map, tileSize);
@@ -384,7 +373,7 @@ export class JumperEnemy extends Enemy {
         this.y = startY - this.height;
         this.spawnX = startX;
 
-        // Phase 12: cache sheet once
+        // * Phase 12: cache sheet once
         this._sheet = document.getElementById("madblockSheet0");
     }
 
@@ -450,9 +439,7 @@ export class JumperEnemy extends Enemy {
     }
 }
 
-// ─────────────────────────────────────────────────────────────
-//  PATROL ENEMY  (madgreen)
-// ─────────────────────────────────────────────────────────────
+// * PATROL ENEMY  (madgreen)
 export class PatrolEnemy extends Enemy {
     constructor(startX, startY, map, tileSize, opts = {}) {
         super(startX, startY, map, tileSize);
@@ -474,7 +461,7 @@ export class PatrolEnemy extends Enemy {
         this.height = 66;
         this.y = startY - this.height;
 
-        // Phase 12: cache sheet once
+        // * Phase 12: cache sheet once
         this._sheet = document.getElementById("madgreenSheet0");
     }
 

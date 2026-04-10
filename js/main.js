@@ -1,20 +1,9 @@
-// ══════════════════════════════════════════════════════════════
-//  main.js  –  Entry point: scene router + game loop
-//  PHASE 12 OPTIMIZATIONS:
-//    • Object pooling for explosions (pre-allocated, recycled)
-//    • Viewport culling for coins, stars, enemies, boxes
-//    • Draw-call batching via single ctx.save/restore per frame
-//    • Checkpoint save throttled (every 60 frames) to reduce JSON work
-//    • Removed redundant per-frame camera.update mid-loop
-//
-//  LEVEL STRUCTURE:
-//    Each level's map, platforms, coins, stars, enemies and boxes
-//    live in their own file under world/levels/levelN.js.
-//    To add a new level:
-//      1. Create world/levels/levelN.js  (copy any existing file as template)
-//      2. Add it to LEVEL_REGISTRY below
-//      3. Done — main.js needs no other changes.
-// ══════════════════════════════════════════════════════════════
+// * PHASE 12 OPTIMIZATIONS:
+// *  • Object pooling for explosions (pre-allocated, recycled)
+// *  • Viewport culling for coins, stars, enemies, boxes
+// *  • Draw-call batching via single ctx.save/restore per frame
+// *  • Checkpoint save throttled (every 60 frames) to reduce JSON work
+// *  • Removed redundant per-frame camera.update mid-loop
 
 import { canvas, ctx, width, height, dpr, resizeCanvas, getLogical } from "./core/canvas.js";
 import { Player } from "./entities/player.js";
@@ -33,7 +22,7 @@ import { setupTouchControls, drawTouchControls, resetVirtualKeys } from "./core/
 import { SCENE, sceneState, MainMenuScene } from "./scene/scenes.js";
 import { LevelSelectScene } from "./scene/levelSelectScene.js";
 
-// ── Level registry — add new levels here only ─────────────────
+// todo ── Level registry — add new levels here only ─────────────────
 import * as Level1 from "./world/levels/level1.js";
 import * as Level2 from "./world/levels/level2.js";
 import * as Level3 from "./world/levels/level3.js";
@@ -55,21 +44,17 @@ const LEVEL_REGISTRY = {
 };
 const MAX_LEVEL = Object.keys(LEVEL_REGISTRY).length;
 
-// ═══════════════════════════════════════════════════════════════
-//  Scene instances
-// ═══════════════════════════════════════════════════════════════
+// * Scene instances
 const mainMenu = new MainMenuScene(canvas);
 const levelSelect = new LevelSelectScene(canvas);
 
 setupTouchControls(canvas, () => sceneState.current, SCENE.GAME_PLAYING);
 
-// ═══════════════════════════════════════════════════════════════
-//  Game world state
-// ═══════════════════════════════════════════════════════════════
+// * Game world state
 const TILE = 64;
 let gameReady = false;
 
-// ── Click debounce — prevents double-fire on desktop ──────────
+// ? ── Click debounce — prevents double-fire on desktop ──────────
 let _lastClickTime = 0;
 const CLICK_DEBOUNCE_MS = 300;
 
@@ -82,20 +67,18 @@ let starsCollected = 0;
 
 let CURRENT_LEVEL = 1;
 
-// ── Door state (loaded from current level module) ─────────────
+// * ── Door state (loaded from current level module) ─────────────
 let DOOR_COL, DOOR_MID_ROW, DOOR_TOP_ROW;
 let doorActivated = false;
 
-// ── Fresh-start flag ──────────────────────────────────────────
+// * ── Fresh-start flag ──────────────────────────────────────────
 let _startFresh = false;
 
-// ── Checkpoint throttle ───────────────────────────────────────
+// * ── Checkpoint throttle ───────────────────────────────────────
 let _checkpointTimer = 0;
 const CHECKPOINT_INTERVAL = 60; // save once per second @ 60fps
 
-// ══════════════════════════════════════════════════════════════
-//  Viewport-culling helper
-// ══════════════════════════════════════════════════════════════
+// * Viewport-culling helper
 const CULL_MARGIN = 128;
 function inView(wx, wy, w, h) {
     return (
@@ -106,39 +89,39 @@ function inView(wx, wy, w, h) {
     );
 }
 
-// ──────────────────────────────────────────────────────────────
+
 function initGame() {
-    // ── Load the level module ─────────────────────────────────
+    // * ── Load the level module ─────────────
     const level = LEVEL_REGISTRY[CURRENT_LEVEL] ?? LEVEL_REGISTRY[1];
 
-    // ── Door position ─────────────────────────────────────────
-    DOOR_COL     = level.DOOR.col;
+    // * ── Door position ─────────
+    DOOR_COL = level.DOOR.col;
     DOOR_MID_ROW = level.DOOR.midRow;
     DOOR_TOP_ROW = level.DOOR.topRow;
 
-    // ── Map & world ───────────────────────────────────────────
-    map    = level.createMap();
+    // * ── Map & world ───────
+    map = level.createMap();
     clouds = createClouds(map[0].length, TILE);
 
-    player     = new Player(map, TILE);
-    camera     = new Camera(canvas, map, TILE);
-    hud        = new HUD();
+    player = new Player(map, TILE);
+    camera = new Camera(canvas, map, TILE);
+    hud = new HUD();
     explosions = new ExplosionManager();
 
-    _prevHealth         = player.health;
+    _prevHealth = player.health;
     _gameOverSoundPlayed = false;
-    starsCollected      = 0;
-    doorActivated       = false;
-    _checkpointTimer    = 0;
+    starsCollected = 0;
+    doorActivated = false;
+    _checkpointTimer = 0;
 
-    // ── Entities (coins, boxes, stars, enemies) from level file ──
+    // * ── Entities (coins, boxes, stars, enemies) from level file ──
     ({ coins, boxes, stars, enemies } = level.createLevelEntities(map, TILE, player));
     player.setExtraSolids(boxes);
 
-    // ── Moving platforms & hazards ────────────────────────────
+    // * ── Moving platforms & hazards ────────────────────────────
     const { bridges: b, bobs: m } = level.createLevelPlatforms(TILE);
     bridges = b;
-    bobs    = m;
+    bobs = m;
 
     const extraSolidsArr = [...boxes, ...bridges];
     player.setExtraSolids(extraSolidsArr);
@@ -147,16 +130,16 @@ function initGame() {
             enemies[i].setExtraSolids(extraSolidsArr);
     }
 
-    // ── HUD callbacks ─────────────────────────────────────────
-    hud.onRestart   = () => { _lastClickTime = Date.now(); _resetGameWorld();  SoundManager.resumeMusic(); };
-    hud.onMenu      = () => { _lastClickTime = Date.now(); _fullHudReset();    SoundManager.pauseMusic();  sceneState.goto(SCENE.LEVEL_SELECT); };
-    hud.onMainMenu  = () => { _lastClickTime = Date.now(); _resetGameWorld();  SoundManager.stopMusic();   sceneState.goto(SCENE.MAIN_MENU); };
+    // * ── HUD callbacks ────────────────────
+    hud.onRestart = () => { _lastClickTime = Date.now(); _resetGameWorld(); SoundManager.resumeMusic(); };
+    hud.onMenu = () => { _lastClickTime = Date.now(); _fullHudReset(); SoundManager.pauseMusic(); sceneState.goto(SCENE.LEVEL_SELECT); };
+    hud.onMainMenu = () => { _lastClickTime = Date.now(); _resetGameWorld(); SoundManager.stopMusic(); sceneState.goto(SCENE.MAIN_MENU); };
     hud.onNextLevel = () => {
         const nextLevel = CURRENT_LEVEL + 1;
         if (nextLevel <= MAX_LEVEL) {
             CURRENT_LEVEL = nextLevel;
-            gameReady    = false;
-            _startFresh  = true;
+            gameReady = false;
+            _startFresh = true;
             _fullHudReset();
             SoundManager.resumeMusic();
         } else {
@@ -166,7 +149,7 @@ function initGame() {
         }
     };
 
-    // ── Checkpoint restore ────────────────────────────────────
+    // * ── Checkpoint restore ────────────
     if (_startFresh) {
         _startFresh = false;
         clearLevelCheckpoint(CURRENT_LEVEL);
@@ -176,13 +159,13 @@ function initGame() {
 
     const saved = loadLevelCheckpoint(CURRENT_LEVEL);
     if (saved && saved.checkpoint) {
-        player.score  = saved.checkpoint.score  ?? 0;
+        player.score = saved.checkpoint.score ?? 0;
         player.health = saved.checkpoint.health ?? 3;
-        player.x      = saved.checkpoint.x      ?? 100;
+        player.x = saved.checkpoint.x ?? 100;
         if ((saved.checkpoint.y ?? 0) > 0) player.y = saved.checkpoint.y;
 
         starsCollected = saved.checkpoint.starsCollected ?? 0;
-        doorActivated  = !!saved.checkpoint.doorActivated;
+        doorActivated = !!saved.checkpoint.doorActivated;
 
         if (Array.isArray(saved.world?.coins))
             coins.forEach((c, i) => { c.collected = !!saved.world.coins[i]; });
@@ -192,7 +175,7 @@ function initGame() {
             boxes.forEach((b, i) => {
                 const d = saved.world.boxes[i];
                 if (!d) return;
-                b.hitsLeft  = typeof d.hitsLeft === "number" ? d.hitsLeft : TreasureBox.MAX_HITS;
+                b.hitsLeft = typeof d.hitsLeft === "number" ? d.hitsLeft : TreasureBox.MAX_HITS;
                 b.exhausted = !!d.exhausted;
             });
         }
@@ -205,57 +188,55 @@ function initGame() {
     gameReady = true;
 }
 
-// ──────────────────────────────────────────────────────────────
+// ! ────────────────
 function _resetGameWorld() {
     clearLevelCheckpoint(CURRENT_LEVEL);
-    gameReady   = false;
+    gameReady = false;
     _startFresh = true;
     _fullHudReset();
     resetVirtualKeys();
     initGame();
 }
 
-// ──────────────────────────────────────────────────────────────
+// ! ──────────────────
 function _fullHudReset() {
     if (!hud) return;
-    hud.paused             = false;
-    hud.panelSlide         = 0;
-    hud.panelAnimDir       = 0;
-    hud.gameOver           = false;
-    hud.gameOverSlide      = 0;
-    hud.gameOverAnimDir    = 0;
-    hud.levelCleared       = false;
-    hud.levelClearedSlide  = 0;
+    hud.paused = false;
+    hud.panelSlide = 0;
+    hud.panelAnimDir = 0;
+    hud.gameOver = false;
+    hud.gameOverSlide = 0;
+    hud.gameOverAnimDir = 0;
+    hud.levelCleared = false;
+    hud.levelClearedSlide = 0;
     hud.levelClearedAnimDir = 0;
     resetVirtualKeys();
 }
 
-// ── Door overlap check ────────────────────────────────────────
+// ? ── Door overlap check ──────
 function _playerAtDoor() {
-    const playerRight  = player.x + player.width;
+    const playerRight = player.x + player.width;
     const playerBottom = player.y + player.height;
-    const doorLeft     = DOOR_COL     * TILE;
-    const doorTop      = DOOR_TOP_ROW * TILE;
-    const doorBot      = (DOOR_MID_ROW + 1) * TILE;
+    const doorLeft = DOOR_COL * TILE;
+    const doorTop = DOOR_TOP_ROW * TILE;
+    const doorBot = (DOOR_MID_ROW + 1) * TILE;
     return (
-        playerRight >= doorLeft  &&
-        player.x    <  doorLeft  &&
-        playerBottom >= doorTop  &&
-        player.y    <= doorBot
+        playerRight >= doorLeft &&
+        player.x < doorLeft &&
+        playerBottom >= doorTop &&
+        player.y <= doorBot
     );
 }
 
-// ═══════════════════════════════════════════════════════════════
-//  Click routing
-// ═══════════════════════════════════════════════════════════════
+// *  Click routing
 canvas.addEventListener("click", e => {
     const now = Date.now();
     if (now - _lastClickTime < CLICK_DEBOUNCE_MS) return;
     _lastClickTime = now;
 
     const rect = canvas.getBoundingClientRect();
-    const mx   = e.clientX - rect.left;
-    const my   = e.clientY - rect.top;
+    const mx = e.clientX - rect.left;
+    const my = e.clientY - rect.top;
 
     const activeScene = sceneState.current;
 
@@ -273,8 +254,8 @@ canvas.addEventListener("click", e => {
                     ? sceneState.selectedLevel
                     : (typeof levelSelect.selectedLevel === "number" ? levelSelect.selectedLevel : 1);
                 CURRENT_LEVEL = chosen;
-                gameReady     = false;
-                _startFresh   = true;
+                gameReady = false;
+                _startFresh = true;
                 initGame();
                 SoundManager.resumeMusic();
             }
@@ -283,18 +264,16 @@ canvas.addEventListener("click", e => {
         case SCENE.GAME_PLAYING:
             if (hud) {
                 const hudScale = camera ? camera.scale : 1;
-                const action   = hud.handleClick(mx / hudScale, my / hudScale);
+                const action = hud.handleClick(mx / hudScale, my / hudScale);
                 if (action === "sound") SoundManager.setMuted(!hud.soundOn);
                 if (action === "pause") hud.paused ? SoundManager.pauseMusic() : SoundManager.resumeMusic();
-                if (action === "play")  SoundManager.resumeMusic();
+                if (action === "play") SoundManager.resumeMusic();
             }
             break;
     }
 });
 
-// ═══════════════════════════════════════════════════════════════
-//  Game loop
-// ═══════════════════════════════════════════════════════════════
+// todo: Game loop
 function loop(ts) {
     requestAnimationFrame(loop);
 
@@ -326,7 +305,7 @@ function loop(ts) {
                 updateWater();
 
                 if (!worldFrozen) {
-                    // ── Moving bridges ───────────────────────────────────
+                    // * ── Moving bridges ────
                     for (let i = 0; i < bridges.length; i++) {
                         bridges[i].update();
                         bridges[i].carryPlayer(player);
@@ -335,7 +314,7 @@ function loop(ts) {
                         }
                     }
 
-                    // ── Metal bobs ───────────────────────────────────────
+                    // * ── Metal bobs ─────
                     for (let i = 0; i < bobs.length; i++) {
                         bobs[i].update();
                         if (!player.dead && bobs[i].overlaps(player)) {
@@ -344,7 +323,7 @@ function loop(ts) {
                         }
                     }
 
-                    // ── Enemies ──────────────────────────────────────────
+                    // * ── Enemies ────
                     for (let i = 0; i < enemies.length; i++) {
                         const enemy = enemies[i];
                         if (!enemy.activated && inView(enemy.x, enemy.y, enemy.width, enemy.height)) {
@@ -369,10 +348,10 @@ function loop(ts) {
                         }
                     }
 
-                    // ── Explosions ───────────────────────────────────────
+                    // * ── Explosions ───────
                     explosions.update();
 
-                    // ── Coins ────────────────────────────────────────────
+                    // * ── Coins ────
                     for (let i = 0; i < coins.length; i++) {
                         const coin = coins[i];
                         if (coin.collected) continue;
@@ -380,19 +359,19 @@ function loop(ts) {
                             coin.update();
                             if (coin.overlaps(player)) {
                                 coin.collected = true;
-                                player.score  += 30;
+                                player.score += 30;
                                 SoundManager.play("coin");
                             }
                         }
                     }
 
-                    // ── Treasure Boxes ───────────────────────────────────
+                    // * ── Treasure Boxes ──
                     for (let i = 0; i < boxes.length; i++) {
                         const hit = boxes[i].update(player);
                         if (hit) SoundManager.play("coin");
                     }
 
-                    // ── Stars ────────────────────────────────────────────
+                    // * ── Stars ─────
                     for (let i = 0; i < stars.length; i++) {
                         const star = stars[i];
                         if (star.collected) continue;
@@ -407,7 +386,7 @@ function loop(ts) {
                         }
                     }
 
-                    // ── Door / Level Clear ────────────────────────────────
+                    // * ── Door / Level Clear ────
                     if (!doorActivated && !player.dead && _playerAtDoor()) {
                         doorActivated = true;
                         map[DOOR_MID_ROW][DOOR_COL] = 20;
@@ -417,9 +396,9 @@ function loop(ts) {
                         hud.showLevelCleared(player.score, starsCollected, stars.length);
                         completeLevel(CURRENT_LEVEL, player.score, starsCollected);
                     }
-                } // end !worldFrozen
+                } // ! end !worldFrozen
 
-                // ── Health change detection ────────────────────────────
+                // * ── Health change detection ───────
                 if (player.health < _prevHealth) {
                     if (player.health <= 0) {
                         if (!_gameOverSoundPlayed) {
@@ -434,16 +413,16 @@ function loop(ts) {
                 }
                 _prevHealth = player.health;
 
-                // ── Throttled checkpoint save ──────────────────────────
+                // * ── Throttled checkpoint save ────
                 if (!worldFrozen) {
                     _checkpointTimer++;
                     if (_checkpointTimer >= CHECKPOINT_INTERVAL) {
                         _checkpointTimer = 0;
                         saveLevelCheckpoint(CURRENT_LEVEL, {
-                            score:          player.score,
-                            health:         player.health,
-                            x:              player.x,
-                            y:              player.y,
+                            score: player.score,
+                            health: player.health,
+                            x: player.x,
+                            y: player.y,
                             starsCollected,
                             doorActivated,
                             coins: coins.map(c => c.collected),
@@ -452,9 +431,9 @@ function loop(ts) {
                         });
                     }
                 }
-            } // end !hud.paused
+            } // ! end !hud.paused
 
-            // ── Draw ──────────────────────────────────────────────────
+            // * ── Draw ───
             ctx.save();
             ctx.scale(scale, scale);
 
@@ -513,6 +492,6 @@ requestAnimationFrame(loop);
 resizeCanvas();
 window.addEventListener("resize", resizeCanvas);
 
-// ── Public exports ────────────────────────────────────────────
+// * ── Public exports ────
 export function getStarsCollected() { return starsCollected; }
-export function getTotalStars()     { return stars ? stars.length : 3; }
+export function getTotalStars() { return stars ? stars.length : 3; }

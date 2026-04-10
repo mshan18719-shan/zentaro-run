@@ -1,8 +1,4 @@
-// ══════════════════════════════════════════════════════════════
-//  explosion.js
-//  Phase 12: True object pool — Explosion instances are recycled
-//  rather than created and garbage-collected every stomp.
-// ══════════════════════════════════════════════════════════════
+// * Phase 12: True object pool — Explosion instances are recycled
 
 const FRAME_TICKS  = 4;
 const RENDER_SIZE  = 65;
@@ -15,7 +11,7 @@ const SEQUENCE = [
     { sheet: 1, col: 0, row: 0 },
 ];
 
-// ── Shared sheet references (loaded once) ─────────────────────
+// * ── Shared sheet references (loaded once) ─────────────────────
 let _sheet0 = null;
 let _sheet1 = null;
 
@@ -24,7 +20,7 @@ function _ensureSheets() {
     if (!_sheet1) _sheet1 = document.getElementById("explosionImg1");
 }
 
-// Pre-compute frame source dimensions once sheets are ready
+// * Pre-compute frame source dimensions once sheets are ready
 let _frameW0 = 0, _frameH0 = 0;
 let _frameW1 = 0, _frameH1 = 0;
 
@@ -39,7 +35,7 @@ function _computeFrameSizes() {
     }
 }
 
-// ── Reusable Explosion slot ───────────────────────────────────
+// * ── Reusable Explosion slot ───────────────────────────────────
 class Explosion {
     constructor() {
         this.cx         = 0;
@@ -49,7 +45,7 @@ class Explosion {
         this.active     = false; // Phase 12: pool flag instead of `done`
     }
 
-    /** Re-initialise a recycled slot */
+    // * Re-initialise a recycled slot
     init(cx, cy) {
         this.cx         = cx;
         this.cy         = cy;
@@ -58,7 +54,7 @@ class Explosion {
         this.active     = true;
     }
 
-    /** Returns true when finished (caller should deactivate) */
+    // * Returns true when finished (caller should deactivate)
     update() {
         if (!this.active) return true;
         this.tick++;
@@ -96,19 +92,17 @@ class Explosion {
     }
 }
 
-// ══════════════════════════════════════════════════════════════
-//  ExplosionManager  —  fixed-size object pool
-// ══════════════════════════════════════════════════════════════
+// ? ExplosionManager  —  fixed-size object pool
 const POOL_SIZE = 16; // max simultaneous explosions
 
 export class ExplosionManager {
     constructor() {
-        // Pre-allocate pool
+        // * Pre-allocate pool
         this._pool = Array.from({ length: POOL_SIZE }, () => new Explosion());
         _ensureSheets();
     }
 
-    /** Get an inactive slot from the pool. Returns null if pool full. */
+    // * Get an inactive slot from the pool. Returns null if pool full.
     spawn(cx, cy) {
         _ensureSheets();
         for (let i = 0; i < POOL_SIZE; i++) {
@@ -117,7 +111,7 @@ export class ExplosionManager {
                 return;
             }
         }
-        // Pool exhausted — silently skip (rare with POOL_SIZE = 16)
+        // ! Pool exhausted — silently skip (rare with POOL_SIZE = 16)
     }
 
     update() {
@@ -132,7 +126,7 @@ export class ExplosionManager {
         }
     }
 
-    /** Re-deactivate all slots (called on game reset) */
+    // * Re-deactivate all slots (called on game reset)
     reset() {
         for (let i = 0; i < POOL_SIZE; i++) this._pool[i].active = false;
     }

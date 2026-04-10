@@ -1,14 +1,11 @@
-// ══════════════════════════════════════════════════════════════
-//  cloud.js
-//  Phase 12 optimizations:
-//    • globalAlpha set once before cloud batch in draw loop (main.js pattern)
-//    • ctx.save/restore removed from individual Cloud.draw()
-//    • Cloud img cached at module level (one DOM lookup)
-// ══════════════════════════════════════════════════════════════
+// * Phase 12 optimizations:
+// *   • globalAlpha set once before cloud batch in draw loop (main.js pattern)
+// *   • ctx.save/restore removed from individual Cloud.draw()
+// *   • Cloud img cached at module level (one DOM lookup)
 
 const CLOUD_PARALLAX = 0.25;
 
-// Phase 12: single DOM lookup shared across all clouds
+// * Phase 12: single DOM lookup shared across all clouds
 let _cloudImg = null;
 function getCloudImg() {
     if (!_cloudImg) _cloudImg = document.getElementById("cloudSheet0");
@@ -38,7 +35,7 @@ class Cloud {
         }
     }
 
-    // Phase 12: no ctx.save/restore — caller sets globalAlpha once for all clouds
+    // * Phase 12: no ctx.save/restore — caller sets globalAlpha once for all clouds
     draw(ctx, camX) {
         const img = getCloudImg();
         if (!img) return;
@@ -66,9 +63,7 @@ export function createClouds(mapCols, tileSize) {
     return defs.map(([x, y, scale, speed]) => new Cloud(x, y, scale, speed));
 }
 
-// ── Batch draw helper used by main.js ─────────────────────────
-// Call this instead of iterating clouds manually to get the
-// single-globalAlpha optimisation automatically.
+// ! ── Batch draw helper used by main.js ─────────────────────────
 export function drawClouds(ctx, clouds, camX) {
     const prevAlpha = ctx.globalAlpha;
     ctx.globalAlpha = 0.82;

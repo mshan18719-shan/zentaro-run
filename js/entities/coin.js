@@ -1,14 +1,11 @@
-// ══════════════════════════════════════════════════════════════
-//  coin.js  –  Coin, TreasureBox, Star
-//  Phase 12 optimizations:
-//    • Frame arrays are SHARED constants (not per-instance allocations)
-//    • Sheet images cached at module level — not per-draw DOM lookup
-//    • Coin.overlaps / Star.overlaps reuse player._pickupBounds (no new object)
-//    • ctx.save/restore removed — caller (main.js) owns state
-//    • PopCoin pool inside TreasureBox (max 4 popcoins, recycled)
-// ══════════════════════════════════════════════════════════════
+// * Phase 12 optimizations:
+// *    • Frame arrays are SHARED constants (not per-instance allocations)
+// *    • Sheet images cached at module level — not per-draw DOM lookup
+// *    • Coin.overlaps / Star.overlaps reuse player._pickupBounds (no new object)
+// *    • ctx.save/restore removed — caller (main.js) owns state
+// *    • PopCoin pool inside TreasureBox (max 4 popcoins, recycled)
 
-// ── Shared constants (allocated once at module load) ──────────
+// * ── Shared constants (allocated once at module load) ──────────
 const COIN_FRAMES = Object.freeze([
     { sx:   0, sy:  8, sw: 42, sh: 43 },
     { sx:  42, sy:  4, sw: 40, sh: 47 },
@@ -27,7 +24,7 @@ const POPCOIN_FRAMES = Object.freeze([
     { sx: 136, sy: 10, sw: 30, sh: 41 },
 ]);
 
-// Phase 12: single DOM lookup at module load
+// * Phase 12: single DOM lookup at module load
 let _coinSheet = null;
 function getCoinSheet() {
     if (!_coinSheet) _coinSheet = document.getElementById("coinsSheet0");
@@ -40,9 +37,7 @@ function getStarSheet() {
     return _starSheet;
 }
 
-// ──────────────────────────────────────────────────────────────
-//  Coin
-// ──────────────────────────────────────────────────────────────
+// * Coin
 export class Coin {
     constructor(x, y) {
         this.x = x;
@@ -51,7 +46,7 @@ export class Coin {
         this.collected  = false;
         this.bobTimer   = Math.random() * Math.PI * 2;
 
-        // Phase 12: no per-instance frames array
+        // * Phase 12: no per-instance frames array
         this.TOTAL_FRAMES = COIN_FRAMES.length;
         this.renderW    = 60;
         this.renderH    = 65;
@@ -116,9 +111,7 @@ export class Coin {
     }
 }
 
-// ──────────────────────────────────────────────────────────────
-//  PopCoin  (internal — not exported)
-// ──────────────────────────────────────────────────────────────
+// ? PopCoin  (internal — not exported)
 class PopCoin {
     constructor() {
         this.x          = 0;
@@ -130,7 +123,7 @@ class PopCoin {
         this.animTimer  = 0;
     }
 
-    // Phase 12: re-init instead of new allocation
+    // * Phase 12: re-init instead of new allocation
     init(x, y) {
         this.x          = x;
         this.y          = y;
@@ -179,9 +172,7 @@ class PopCoin {
     }
 }
 
-// ──────────────────────────────────────────────────────────────
-//  TreasureBox
-// ──────────────────────────────────────────────────────────────
+// ! TreasureBox
 export class TreasureBox {
     static MAX_HITS = 3;
 
@@ -204,7 +195,7 @@ export class TreasureBox {
         this._bumpDir    = -1;
         this._BUMP_DIST  = 14;
 
-        // Phase 12: fixed-size pool of 3 PopCoins (one per MAX_HIT)
+        // * Phase 12: fixed-size pool of 3 PopCoins (one per MAX_HIT)
         this._popPool = [new PopCoin(), new PopCoin(), new PopCoin()];
         this._popCoins= []; // active references (subset of _popPool)
 
@@ -224,7 +215,7 @@ export class TreasureBox {
     }
 
     update(player) {
-        // Update active pop-coins
+        // * Update active pop-coins
         for (let i = 0; i < this._popCoins.length; i++) this._popCoins[i].update();
         // Remove done ones
         this._popCoins = this._popCoins.filter(pc => !pc.done);
@@ -313,9 +304,7 @@ export class TreasureBox {
     }
 }
 
-// ──────────────────────────────────────────────────────────────
-//  Star
-// ──────────────────────────────────────────────────────────────
+// ? Star
 export class Star {
     static COLS        = 3;
     static ROWS        = 3;
@@ -335,7 +324,7 @@ export class Star {
         this.animTimer  = 0;
         this.animSpeed  = 14;
 
-        // Phase 12: cache frameW/H once sheet is ready (lazy)
+        // * Phase 12: cache frameW/H once sheet is ready (lazy)
         this._frameW = 0;
         this._frameH = 0;
     }

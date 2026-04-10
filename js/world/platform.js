@@ -1,38 +1,14 @@
-// ══════════════════════════════════════════════════════════════
-//  platforms.js
-//  Animated platform objects that live alongside the tile map:
-//
-//  ① AnimatedWater  — overlays water tiles with a side-scrolling
-//                     wave texture so water looks alive.
-//
-//  ② MovingBridge   — a horizontal platform that slides left/right
-//                     (or up/down). Player can stand on it.
-//                     Image: metalblocks-sheet0.png  (#metalBob)
-//                     Wait — that's the hazard. Bridge uses
-//                     movbridge-sheet0.png  (#movingBridge).
-//
-//  ③ MetalBob       — a spiked/metal hazard sphere that patrols
-//                     left/right OR up/down. Touching it deals 1
-//                     damage. Image: metalblocks-sheet0.png (#metalBob).
-
-//  All sizes are exposed as constants so you can tweak them easily.
-// ══════════════════════════════════════════════════════════════
-
-// ─────────────────────────────────────────────────────────────
-//  Tuneable constants  (edit these to resize / retime things)
-// ─────────────────────────────────────────────────────────────
+// * Tuneable constants  (edit these to resize / retime things)
 export const BRIDGE_W = 150;   // px — rendered width  of the bridge sprite
 export const BRIDGE_H = 40;   // px — rendered height of the bridge sprite
 export const METALBOB_SIZE = 170;   // px — rendered size   of the metal bob (square)
 
-// Water animation
+// ? Water animation
 const WATER_SCROLL_SPEED = 0.6;   // px/frame — how fast the wave pattern scrolls
 const WATER_TILE_W = 64;   // must match map.js tile-2 render width
 const WATER_TILE_H = 90;   // must match map.js tile-2 render height
 
-// ─────────────────────────────────────────────────────────────
-//  Lazy image cache
-// ─────────────────────────────────────────────────────────────
+// * Lazy image cache
 let _bridgeImg = null;
 let _bobImg = null;
 let _waterImg = null;   // same as tile 2/3 — reused from DOM
@@ -42,17 +18,16 @@ function _getImg(id) {
 }
 
 // ══════════════════════════════════════════════════════════════
-//  ① AnimatedWater
-//  Call updateWater() each frame, then drawWater() after drawMap().
-//  It scans the map for tile-2 and tile-3 cells that are inside
-//  the camera view and re-draws them with a horizontally scrolling
-//  offset, giving the illusion of moving water.
-// ══════════════════════════════════════════════════════════════
+// ? ① AnimatedWater
+// ? Call updateWater() each frame, then drawWater() after drawMap().
+// ? It scans the map for tile-2 and tile-3 cells that are inside
+// ? the camera view and re-draws them with a horizontally scrolling
+// ? offset, giving the illusion of moving water.
 let _waterScrollX = 0;
 
 export function updateWater() {
     _waterScrollX += WATER_SCROLL_SPEED;
-    // Reset when we've scrolled one full tile width to avoid float drift
+    // ! Reset when we've scrolled one full tile width to avoid float drift
     if (_waterScrollX >= WATER_TILE_W) _waterScrollX -= WATER_TILE_W;
 }
 
@@ -106,19 +81,9 @@ export function drawWater(ctx, map, tileSize, camera) {
     ctx.restore();
 }
 
-// ══════════════════════════════════════════════════════════════
-//  ② MovingBridge
-//  A platform that slides left↔right OR up↕down.
-//  Player can stand on it (it acts as an extraSolid).
-//
-//  constructor(worldX, worldY, options)
-//    worldX / worldY  — initial world-space position (top-left)
-//    options:
-//      axis        : "x" | "y"   (default "x")
-//      range       : pixels the bridge travels from its start (default 128)
-//      speed       : pixels/frame                             (default 1.5)
-//      startOffset : 0–1 phase offset so multiple bridges are out of sync
-// ══════════════════════════════════════════════════════════════
+// * ② MovingBridge
+// * A platform that slides left↔right OR up↕down.
+// * Player can stand on it (it acts as an extraSolid).
 export class MovingBridge {
     /**
      * @param {number} worldX
@@ -258,19 +223,9 @@ export class MovingBridge {
     }
 }
 
-// ══════════════════════════════════════════════════════════════
-//  ③ MetalBob
-//  A hazard that moves left↔right OR up↕down. Touching it deals
-//  1 point of damage to the player (with invincibility frames).
-//  It is NOT a platform — the player cannot stand on it.
-//
-//  constructor(worldX, worldY, options)
-//    options:
-//      axis        : "x" | "y"          (default "x")
-//      range       : travel distance px  (default 96)
-//      speed       : px/frame            (default 2)
-//      startOffset : 0–1 phase           (default 0)
-// ══════════════════════════════════════════════════════════════
+// ! ③ MetalBob
+// ! A hazard that moves left↔right OR up↕down. Touching it deals
+// ! 1 point of damage to the player (with invincibility frames).
 export class MetalBob {
     /**
      * @param {number} worldX
@@ -388,9 +343,7 @@ export class MetalBob {
     }
 }
 
-// ══════════════════════════════════════════════════════════════
-//  Factory helpers — called from main.js per level
-// ══════════════════════════════════════════════════════════════
+// * Factory helpers — called from main.js per level
 
 /**
  * Returns default platform layout for Level 1.

@@ -1,16 +1,8 @@
-// ══════════════════════════════════════════════════════════════
-//  world/map.js  —  Tile engine only
-//
-//  ✦ NO level data lives here anymore.
-//  ✦ Each level defines its own createMap() inside
-//    world/levels/levelN.js.
-//
-//  Phase 12 optimizations:
-//    • Block images cached in an array at first draw
-//    • tileRenderSettings flattened into parallel arrays (cache-friendly)
-//    • drawMap inner loop uses cached image refs
-//    • isSolid / isHazard unchanged (already very tight)
-// ══════════════════════════════════════════════════════════════
+// * Phase 12 optimizations:
+// *  • Block images cached in an array at first draw
+// *  • tileRenderSettings flattened into parallel arrays (cache-friendly)
+// *  • drawMap inner loop uses cached image refs
+// *  • isSolid / isHazard unchanged (already very tight)
 
 const blockIds = [
     null,       // 0
@@ -43,7 +35,7 @@ const blockIds = [
 ];
 const BLOCK_COUNT = blockIds.length;
 
-// Phase 12: image cache populated on first draw (lazy, stable after that)
+// * Phase 12: image cache populated on first draw (lazy, stable after that)
 const _imgCache = new Array(BLOCK_COUNT).fill(null);
 let _cacheReady = false;
 
@@ -54,10 +46,10 @@ function _buildImageCache() {
     _cacheReady = true;
 }
 
-// Non-solid tile IDs
-const NON_SOLID = new Set([2, 3, 6, 7, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 24, 25]); // 2, 3, 
+// ? Non-solid tile IDs
+const NON_SOLID = new Set([2, 3, 6, 7, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 24, 25]);
 
-// Phase 12: flat parallel arrays instead of object per tile type (cache-friendly)
+// * Phase 12: flat parallel arrays instead of object per tile type (cache-friendly)
 const _rW  = new Int16Array(BLOCK_COUNT); // draw width  (0 = use tileSize)
 const _rH  = new Int16Array(BLOCK_COUNT); // draw height (0 = use tileSize)
 const _rOX = new Int16Array(BLOCK_COUNT); // offsetX
@@ -100,9 +92,7 @@ const _rOY = new Int16Array(BLOCK_COUNT); // offsetY
     }
 })();
 
-// ─────────────────────────────────────────────────────────────
-//  DRAW MAP
-// ─────────────────────────────────────────────────────────────
+// * DRAW MAP
 export function drawMap(ctx, map, tileSize, camera) {
     if (!_cacheReady) _buildImageCache();
 
@@ -133,9 +123,7 @@ export function drawMap(ctx, map, tileSize, camera) {
     }
 }
 
-// ─────────────────────────────────────────────────────────────
-//  TILE COLLISION
-// ─────────────────────────────────────────────────────────────
+// * TILE COLLISION
 export function isSolid(map, col, row) {
     if (row < 0 || row >= map.length || col < 0 || col >= map[0].length) return false;
     const tile = map[row][col];
@@ -143,9 +131,7 @@ export function isSolid(map, col, row) {
     return !NON_SOLID.has(tile);
 }
 
-// ─────────────────────────────────────────────────────────────
-//  HAZARD DETECTION
-// ─────────────────────────────────────────────────────────────
+// ! HAZARD DETECTION
 export function isHazard(map, col, row) {
     if (row < 0 || row >= map.length || col < 0 || col >= map[0].length) return null;
     const tile = map[row][col];

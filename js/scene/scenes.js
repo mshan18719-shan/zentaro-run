@@ -1,6 +1,4 @@
-// ══════════════════════════════════════════════════════════════
-//  scenes.js  –  All game scenes: MainMenu | LevelSelect | GamePlaying
-// ══════════════════════════════════════════════════════════════
+// * scenes.js  –  All game scenes: MainMenu | LevelSelect | GamePlaying
 
 export const SCENE = {
     MAIN_MENU: "MAIN_MENU",
@@ -8,20 +6,18 @@ export const SCENE = {
     GAME_PLAYING: "GAME_PLAYING",
 };
 
-// ── Shared state ─────────────────────────────────────────────
+// * ── Shared state ──────
 export const sceneState = {
     current: SCENE.MAIN_MENU,
     selectedLevel: 1,
 
-    // ── Read level stars from the same progress store used by progress.js ──
-    // progress.js writes to "madboy_progress"; we read from there so that
-    // completing a level (which calls completeLevel()) actually unlocks the next.
+    // * ── Read level stars from the same progress store used by progress.js ──
     get levelStars() {
         try {
             const raw = localStorage.getItem("madboy_progress");
             if (!raw) return [0, 0, 0];
             const data = JSON.parse(raw);
-            // Build an array [stars_lvl1, stars_lvl2, stars_lvl3]
+            // ? Build an array [stars_lvl1, stars_lvl2, stars_lvl3]
             return [1, 2, 3].map(lvl => (data.levels?.[lvl]?.stars ?? 0));
         } catch { return [0, 0, 0]; }
     },
@@ -45,9 +41,7 @@ export const sceneState = {
     },
 };
 
-// ══════════════════════════════════════════════════════════════
-//  Helper – draw rounded rect path
-// ══════════════════════════════════════════════════════════════
+// * Helper – draw rounded rect path
 function roundRect(ctx, x, y, w, h, r) {
     ctx.beginPath();
     ctx.moveTo(x + r, y);
@@ -62,9 +56,7 @@ function roundRect(ctx, x, y, w, h, r) {
     ctx.closePath();
 }
 
-// ══════════════════════════════════════════════════════════════
-//  MainMenuScene
-// ══════════════════════════════════════════════════════════════
+// * MainMenuScene
 export class MainMenuScene {
     constructor(canvas) {
         this.canvas   = canvas;
@@ -75,14 +67,14 @@ export class MainMenuScene {
         this._playBtnImg = document.getElementById("mainPlayBtn");
     }
 
-    // vw/vh are LOGICAL (CSS) pixels passed from main.js game loop
+    // ? vw/vh are LOGICAL (CSS) pixels passed from main.js game loop
     update(vw, vh) {
         this._t++;
         this._playBtn = this._calcBtn(vw, vh);
     }
 
     draw(ctx, vw, vh) {
-        // Background gradient
+        // ? Background gradient
         const grad = ctx.createRadialGradient(
             vw * 0.5, vh * 0.38, 0,
             vw * 0.5, vh * 0.38, Math.max(vw, vh) * 0.9
@@ -97,35 +89,27 @@ export class MainMenuScene {
         this._drawPlayBtn(ctx, vw, vh);
     }
 
-    // ── Layout helper: computes a single scale factor relative to the
-    //    1280×720 reference so every element shrinks proportionally on
-    //    smaller screens, just like camera.js does for the game world.
+    // ! ── Layout helper: computes a single scale for responsiveness
     _layoutScale(vw, vh) {
         return Math.min(vw / 1280, vh / 720);
     }
 
-    // ── Single source of truth for button position/size ───────
-    // Scales the button down on small screens instead of clamping
-    // to 0.55, which caused the button to overlap the hero image.
+    // * ── Single source of truth for button position/size ───────
     _calcBtn(vw, vh) {
-        // Use the true layout scale — no minimum floor so small screens
-        // shrink proportionally and the button stays below the hero image.
+        // * shrink proportionally and the button stays below the hero image.
         const s = this._layoutScale(vw, vh);
 
-        // Reference button size at 1280×720
+        // * Reference button size at 1280×720
         const REF_W = 220;
         const REF_H = 88;
 
         const btnW = Math.round(REF_W * s);
         const btnH = Math.round(REF_H * s);
 
-        // Horizontal: centred in the middle third of the screen (between
-        // hero on the left and enemies on the right), same as desktop.
+        // * Horizontal: centred in the middle third of the screen
         const btnX = Math.round(vw * 0.5 - btnW / 2);
 
-        // Vertical: sit at 74 % of vh — identical to the original desktop
-        // position.  On small screens vh is already small so this stays
-        // visually in the lower-centre area, well below the hero image.
+        // * Vertical: sit at 74 % of vh — identical to the original desktop
         const btnY = Math.round(vh * 0.74 - btnH / 2);
 
         return { x: btnX, y: btnY, w: btnW, h: btnH };
@@ -138,13 +122,13 @@ export class MainMenuScene {
         const s  = this._layoutScale(vw, vh);
         const ar = img.naturalWidth / img.naturalHeight;
 
-        // ── Reference draw size at 1280 × 720 ────────────────────
-        // At the desktop reference the image was drawn as:
+        // * ── Reference draw size at 1280 × 720 ────────────────────
+        // * At the desktop reference the image was drawn as:
         //   drawW = vw * 0.72  →  1280 * 0.72 ≈ 922  (+200 = 1122)
         //   drawH = drawW / ar                        (+70)
-        // We replicate that reference size and scale it down uniformly
-        // with the same layout scale used by the button.  No hardcoded
-        // pixel offsets — those were the root cause of the overflow.
+        // * We replicate that reference size and scale it down uniformly
+        // * with the same layout scale used by the button.  No hardcoded
+        // * pixel offsets — those were the root cause of the overflow.
         const REF_VW  = 1280;
         const REF_VH  = 720;
         const refDrawW = REF_VW * 0.96 + 200;   // ≈ 1122  (original desktop intent)
@@ -153,7 +137,7 @@ export class MainMenuScene {
         const drawW = refDrawW * s;
         const drawH = refDrawH * s;
 
-        // Always anchored to the top-left corner, same as the original.
+        // * Always anchored to the top-left corner, same as the original.
         ctx.save();
         ctx.drawImage(img, 22, 0, drawW, drawH);
         ctx.restore();
@@ -183,7 +167,7 @@ export class MainMenuScene {
         }
     }
 
-    // mx/my must be LOGICAL (CSS) pixels — ensured by main.js click handler
+    // ! mx/my must be LOGICAL (CSS) pixels — ensured by main.js click handler
     handleClick(mx, my) {
         if (sceneState.current !== SCENE.MAIN_MENU) return;
         const b = this._playBtn;

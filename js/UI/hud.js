@@ -1,58 +1,40 @@
-// hud.js  —  Fully responsive for desktop + mobile landscape
-// Expected <img> IDs in HTML:
-//   coinsSheet2      → assets/coins2-sheet0.png
-//   livesSheet0      → assets/lives-sheet0.png
-//   pauseBtn         → assets/pausebtn-sheet0.png
-//   playBtn          → assets/playbtn-sheet0.png
-//   restartBtn       → assets/restartbtn-sheet0.png
-//   menuBtn          → assets/menubtn-sheet0.png
-//   pausePanel       → assets/pausepanel-sheet0.png
-//   volumeBtn0       → assets/volumebtn-sheet0.png  (sound ON)
-//   volumeBtn1       → assets/volumebtn-sheet1.png  (sound OFF)
-//   gameOver         → assets/gameover panel image
-//   gameStop         → assets/stop/menu button in game-over
-//   gameContinue     → assets/restart button in game-over
-//   levelClear       → assets/levelcleared panel image
-//   emptyStar        → assets/empty star
-//   shiningStar      → assets/shining star
-//   facebook         → assets/facebook share button
-//   nextBtn          → assets/next level button
+// * hud.js  —  Fully responsive for desktop + mobile landscape
 
 export class HUD {
     constructor() {
-        // Panel icons
+        // * Panel icons
         this.coinImg  = document.getElementById("coinsSheet2");
         this.heartImg = document.getElementById("livesSheet0");
 
-        // Coin animation
+        // * Coin animation
         this.coinFrame      = 0;
         this.coinAnimTick   = 0;
         this.coinAnimSpeed  = 20;
 
-        // Top-right button images
+        // * Top-right button images
         this.pauseImg  = document.getElementById("pauseBtn");
         this.playImg   = document.getElementById("playBtn");
         this.volOnImg  = document.getElementById("volumeBtn0");
         this.volOffImg = document.getElementById("volumeBtn1");
 
-        // Pause-panel assets
+        // * Pause-panel assets
         this.pausePanel = document.getElementById("pausePanel");
         this.restartImg = document.getElementById("restartBtn");
         this.menuImg    = document.getElementById("menuBtn");
 
-        // Game Over assets
+        // ! Game Over assets
         this.gameOverImg  = document.getElementById("gameOver");
         this.stopGame     = document.getElementById("gameStop");
         this.continueGame = document.getElementById("gameContinue");
 
-        // Level Cleared assets
+        // ? Level Cleared assets
         this.levelClearImg  = document.getElementById("levelClear");
         this.emptyStarImg   = document.getElementById("emptyStar");
         this.shiningStarImg = document.getElementById("shiningStar");
         this.facebookImg    = document.getElementById("facebook");
         this.nextImg        = document.getElementById("nextBtn");
 
-        // Game Over modal state
+        // ! Game Over modal state
         this.gameOver         = false;
         this.gameOverSlide    = 0;
         this.gameOverAnimDir  = 0;
@@ -61,7 +43,7 @@ export class HUD {
         this._gameOverRestartBtn = { x: 0, y: 0, w: 0, h: 0 };
         this._gameOverMenuBtn    = { x: 0, y: 0, w: 0, h: 0 };
 
-        // Level Cleared modal state
+        // ? Level Cleared modal state
         this.levelCleared        = false;
         this.levelClearedSlide   = 0;
         this.levelClearedAnimDir = 0;
@@ -73,23 +55,23 @@ export class HUD {
         this.soundOn = true;
         this.paused  = false;
 
-        // Pause panel slide state
+        // * Pause panel slide state
         this.panelSlide   = 0;
         this.panelAnimDir = 0;
         this.SLIDE_SPEED  = 0.075;
 
-        // Callbacks (set from main.js)
+        // * Callbacks (set from main.js)
         this.onRestart   = null;
         this.onMenu      = null;
         this.onMainMenu  = null;
         this.onNextLevel = null;
 
-        // Hit-rects (updated every draw)
+        // * Hit-rects (updated every draw)
         this.soundBtn     = { x: 0, y: 0, w: 52, h: 52 };
         this.pauseBtn     = { x: 0, y: 0, w: 52, h: 52 };
         this.screenBtnRect = { x: 0, y: 0, w: 52, h: 52 };
 
-        // Fullscreen state
+        // * Fullscreen state
         this.isFullscreen = false;
         this._onFSChange  = () => {
             this.isFullscreen = !!(
@@ -110,14 +92,13 @@ export class HUD {
         this._panelMenuBtn    = { x: 0, y: 0, w: 0, h: 0 };
     }
 
-
-    // ── Toggle pause ─────────────────────────────────────────────────────
+    // * ── Toggle pause ───
     _togglePause() {
         this.paused = !this.paused;
         this.panelAnimDir = this.paused ? 1 : -1;
     }
 
-    // ── Trigger Level Cleared panel ──────────────────────────────────────
+    // ? ── Trigger Level Cleared panel ──
     showLevelCleared(score, starsCollected, totalStars) {
         if (this.levelCleared) return;
         this.levelCleared            = true;
@@ -129,15 +110,15 @@ export class HUD {
         this._lcStarTimers           = [0, 0, 0];
     }
 
-    // ── Click handling ───────────────────────────────────────────────────
+    // * ── Click handling ───
     handleClick(mx, my) {
-        // Volume button always works
+        // * Volume button always works
         if (this._inRect(mx, my, this.soundBtn)) {
             this.soundOn = !this.soundOn;
             return "sound";
         }
 
-        // Level Cleared panel buttons
+        // ? Level Cleared panel buttons
         if (this.levelCleared && this.levelClearedSlide > 0.05) {
             if (this._inRect(mx, my, this._lcMenuBtn)) {
                 this.levelCleared = false; this.levelClearedSlide = 0;
@@ -161,7 +142,7 @@ export class HUD {
             return null;
         }
 
-        // Game Over panel buttons
+        // ! Game Over panel buttons
         if (this.gameOver && this.gameOverSlide > 0.05) {
             if (this._inRect(mx, my, this._gameOverRestartBtn)) {
                 this.gameOver = false; this.gameOverSlide = 0;
@@ -178,7 +159,7 @@ export class HUD {
             return null;
         }
 
-        // Pause panel inner buttons
+        // * Pause panel inner buttons
         if (this.panelSlide > 0.05) {
             if (this._inRect(mx, my, this._panelPlayBtn)) {
                 this._togglePause(); return "play";
@@ -193,7 +174,7 @@ export class HUD {
             return null;
         }
 
-        // Pause button (top-right)
+        // * Pause button (top-right)
         if (this._inRect(mx, my, this.pauseBtn)) {
             this._togglePause(); return "pause";
         }
@@ -206,7 +187,7 @@ export class HUD {
                my >= r.y && my <= r.y + r.h;
     }
 
-    // ── Animation steppers ───────────────────────────────────────────────
+    //*  ── Animation steppers ───────────────────────────────────────────────
     _stepAnim() {
         if (this.panelAnimDir === 0) return;
         this.panelSlide += this.panelAnimDir * this.SLIDE_SPEED;
@@ -236,14 +217,12 @@ export class HUD {
         }
     }
 
-    // ════════════════════════════════════════════════════════════════════
-    //  Main draw — all measurements relative to viewW / viewH
-    // ════════════════════════════════════════════════════════════════════
+    // * Main draw — all measurements relative to viewW / viewH
     draw(ctx, viewW, viewH, score, health, maxHealth = 3) {
         this._stepAnim();
         this._stepCoinAnim();
 
-        // Auto-trigger Game Over
+        // ! Auto-trigger Game Over
         if (health <= 0 && !this.gameOver && !this.levelCleared) {
             this.gameOver       = true;
             this.gameOverAnimDir = 1;
@@ -253,17 +232,17 @@ export class HUD {
         this._stepGameOverAnim();
         this._stepLevelClearedAnim();
 
-        // ── Responsive HUD scale factor ────────────────────────────────
-        // viewW/viewH are now virtual dimensions (real screen / camera.scale).
-        // Reference is 960×540 — same as Camera.computeScale().
-        // On mobile the virtual viewport IS ~960×540, so hudScale ≈ 1.0.
-        // On a large desktop (1920×1080 real → still capped to 960×540 virtual)
-        // hudScale is also ~1.0. This keeps panels consistently sized.
+        // todo ── Responsive HUD scale factor ────────────────────────────────
+        // * viewW/viewH are now virtual dimensions (real screen / camera.scale).
+        // * Reference is 960×540 — same as Camera.computeScale().
+        // * On mobile the virtual viewport IS ~960×540, so hudScale ≈ 1.0.
+        // * On a large desktop (1920×1080 real → still capped to 960×540 virtual)
+        // * hudScale is also ~1.0. This keeps panels consistently sized.
         const hudScale = Math.max(0.6, Math.min(1.0,
             Math.min(viewW / 960, viewH / 540)
         ));
 
-        // ── TOP-LEFT: coin icon + score + hearts ───────────────────────
+        // * ── TOP-LEFT: coin icon + score + hearts ───────────────────────
         ctx.save();
 
         const margin  = Math.round(14 * hudScale);
@@ -289,7 +268,7 @@ export class HUD {
             ctx.fill();
         }
 
-        // Score text
+        // * Score text
         const scoreFontSize = Math.round(60 * hudScale);
         ctx.fillStyle    = "#1a1a2e";
         ctx.font         = `bold ${scoreFontSize}px 'Arial Rounded MT Bold', Arial, sans-serif`;
@@ -300,7 +279,7 @@ export class HUD {
             panelY + Math.round(8  * hudScale)
         );
 
-        // Hearts
+        //! Hearts
         const heartSize = Math.round(50 * hudScale);
         const heartGap  = Math.round(6  * hudScale);
         for (let i = 0; i < maxHealth; i++) {
@@ -324,7 +303,7 @@ export class HUD {
 
         ctx.restore();
 
-        // ── TOP-RIGHT: volume + pause buttons ─────────────────────────
+        // * ── TOP-RIGHT: volume + pause buttons ─────────────────────────
         const topBtnSize = Math.round(52 * hudScale);
         const topMargin  = Math.round(14 * hudScale);
         const topBtnY    = topMargin;
@@ -397,7 +376,7 @@ export class HUD {
             }
         }
 
-        // ── Pause / Game-Over / Level-Cleared panels ───────────────────
+        // todo ── Pause / Game-Over / Level-Cleared panels ───────────────────
         if (this.panelSlide > 0) {
             this._drawPausePanel(ctx, viewW, viewH);
         }
@@ -409,9 +388,7 @@ export class HUD {
         }
     }
 
-    // ════════════════════════════════════════════════════════════════════
-    //  PAUSE PANEL
-    // ════════════════════════════════════════════════════════════════════
+    // * PAUSE PANEL
     _drawPausePanel(ctx, viewW, viewH) {
         const t = 1 - Math.pow(1 - this.panelSlide, 3);
 
@@ -493,9 +470,7 @@ export class HUD {
         ctx.restore();
     }
 
-    // ════════════════════════════════════════════════════════════════════
-    //  GAME OVER PANEL
-    // ════════════════════════════════════════════════════════════════════
+    // ! GAME OVER PANEL
     _drawGameOverPanel(ctx, viewW, viewH) {
         const t = 1 - Math.pow(1 - this.gameOverSlide, 3);
 
@@ -569,9 +544,7 @@ export class HUD {
         ctx.restore();
     }
 
-    // ════════════════════════════════════════════════════════════════════
-    //  LEVEL CLEARED PANEL
-    // ════════════════════════════════════════════════════════════════════
+    // ? LEVEL CLEARED PANEL
     _drawLevelClearedPanel(ctx, viewW, viewH) {
         const t = 1 - Math.pow(1 - this.levelClearedSlide, 3);
 
@@ -743,7 +716,7 @@ export class HUD {
         ctx.restore();
     }
 
-    // ── Canvas star shape (fallback) ──────────────────────────────────────
+    // * ── Canvas star shape (fallback) ──────────
     _drawCanvasStar(ctx, cx, cy, r, color) {
         const spikes = 5, outerR = r, innerR = r * 0.42;
         ctx.save();
@@ -762,7 +735,7 @@ export class HUD {
         ctx.restore();
     }
 
-    // ── Helpers ───────────────────────────────────────────────────────────
+    // * ── Helpers ────────
     _drawCircleBtn(ctx, cx, cy, r, color) {
         ctx.save();
         ctx.fillStyle   = color;
