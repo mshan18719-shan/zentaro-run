@@ -41,6 +41,7 @@ import * as Level4 from "./world/levels/level4.js";
 import * as Level5 from "./world/levels/level5.js";
 import * as Level6 from "./world/levels/level6.js";
 import * as Level7 from "./world/levels/level7.js";
+import * as Level8 from "./world/levels/level8.js";
 
 const LEVEL_REGISTRY = {
     1: Level1,
@@ -50,6 +51,7 @@ const LEVEL_REGISTRY = {
     5: Level5,
     6: Level6,
     7: Level7,
+    8: Level8,
 };
 const MAX_LEVEL = Object.keys(LEVEL_REGISTRY).length;
 

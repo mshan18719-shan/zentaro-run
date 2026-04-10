@@ -14,11 +14,7 @@
 //  ③ MetalBob       — a spiked/metal hazard sphere that patrols
 //                     left/right OR up/down. Touching it deals 1
 //                     damage. Image: metalblocks-sheet0.png (#metalBob).
-//
-//  Image sizes (measured from the assets):
-//    movbridge-sheet0.png  → rendered at 192 × 40 px  (3 tiles wide, thin)
-//    metalblocks-sheet0.png→ rendered at 64  × 64 px  (1 tile)
-//
+
 //  All sizes are exposed as constants so you can tweak them easily.
 // ══════════════════════════════════════════════════════════════
 
@@ -401,32 +397,18 @@ export class MetalBob {
  * @param {number} TILE
  * @returns {{ bridges: MovingBridge[], bobs: MetalBob[] }}
  */
+
 export function createPlatformsLevel1(TILE) {
     return {
         bridges: [
-            // Over the water pit at cols 101-104, row 11 area
-            // new MovingBridge(99  * TILE, 10 * TILE, { axis: "x", range: 3 * TILE, speed: 1.4 }),
-            // Between the two raised platforms at cols 64-76, row 7
-            // new MovingBridge(68  * TILE,  6 * TILE, { axis: "x", range: 3 * TILE, speed: 1.6, startOffset: 0.5 }),
-            // Vertical bob-platform near the tall wall (col 119)
             new MovingBridge(88 * TILE, 8 * TILE, { axis: "y", range: 5 * TILE, speed: 1.2, startOffset: 0.3 }),
         ],
         bobs: [
-            // Patrol above the spikes at row 10, col 21-24
-            // new MetalBob(21 * TILE,  8 * TILE, { axis: "x", range: 3 * TILE, speed: 2.2 }),
-            // Patrol over the elevated section col 45-55
-            // new MetalBob(44 * TILE,  7 * TILE, { axis: "x", range: 4 * TILE, speed: 2,   startOffset: 0.5 }),
-            // Vertical patrol near the stone wall
             new MetalBob(118 * TILE, 3 * TILE, { axis: "y", range: 6 * TILE, speed: 2.5, startOffset: 0.2 }),
         ],
     };
 }
 
-/**
- * Returns default platform layout for Level 2.
- * @param {number} TILE
- * @returns {{ bridges: MovingBridge[], bobs: MetalBob[] }}
- */
 export function createPlatformsLevel2(TILE) {
     return {
         bridges: [
@@ -451,23 +433,15 @@ export function createPlatformsLevel2(TILE) {
     };
 }
 
-/**
- * Returns default platform layout for Level 3.
- * @param {number} TILE
- * @returns {{ bridges: MovingBridge[], bobs: MetalBob[] }}
- */
 export function createPlatformsLevel3(TILE) {
     return {
         bridges: [
             // ── Zone 2: Bridge over Gap 1 (cols 20-24) ──────────────────
-            // Moves sideways, player must time the jump onto it
             new MovingBridge(24 * TILE, 11 * TILE, { axis: "x", range: 4 * TILE, speed: 2.0 }),
 
         ],
         bobs: [
             // ── Zone 1: Low horizontal sweep over spike field ────────────
-            // Forces player to jump + navigate spikes at same time
-            // new MetalBob( 1 * TILE, 8 * TILE, { axis: "x", range: 3 * TILE, speed: 2.8 }),
             new MetalBob( 20 * TILE,  0 * TILE, { axis: "y", range: 4 * TILE, speed: 3.5, startOffset: 0.5 }),
         ],
     };
@@ -495,7 +469,6 @@ export function createPlatformsLevel5(TILE) {
     return {
         bridges: [
             // ── Zone 2: Bridge over Gap 1 (cols 20-24) ──────────────────
-            // Moves sideways, player must time the jump onto it
             new MovingBridge(79 * TILE, 4 * TILE, { axis: "x", range: 3 * TILE, speed: 3.0 }),
             new MovingBridge(86 * TILE, 9 * TILE, { axis: "y", range: 3 * TILE, speed: 1.3, startOffset: 0.6 }),
             new MovingBridge(90 * TILE, 4 * TILE, { axis: "x", range: 3 * TILE, speed: 3.5 }),
@@ -513,7 +486,6 @@ export function createPlatformsLevel6(TILE) {
     return {
         bridges: [
             // ── Zone 2: Bridge over Gap 1 (cols 20-24) ──────────────────
-             // Bridge 1 slides over the left half of the river gap
             new MovingBridge(29 * TILE, 10 * TILE, { axis: "x", range: 4 * TILE, speed: 2.8, startOffset: 0.0 }),
             // Bridge 2 slides over the right half — player must hop between them
             new MovingBridge(43 * TILE, 5 * TILE, { axis: "x", range: 4 * TILE, speed: 3.2, startOffset: 0.5 }),
@@ -550,23 +522,38 @@ export function createPlatformsLevel6(TILE) {
     };
 }
 
-
 export function createPlatformsLevel7(TILE) {
     return {
         bridges: [
             // ── Zone 2: Checkerboard Hell — two horizontal bridges ──────────────
-            // Bridge 1 reaches from zone entry to shelf 1 (over water+void mix)
             new MovingBridge(25 * TILE, 11 * TILE, { axis: "x", range: 6 * TILE, speed: 3.0, startOffset: 0.0 }),
         ],
         bobs: [
             // ── Zone 2: Checkerboard — vertical bob over the high bait shelf ─────
-            // new MetalBob(39 * TILE,  0 * TILE, { axis: "y", range: 4 * TILE, speed: 4.0, startOffset: 0.2 }),
-
-            // ── Zone 4: Bridge-Only Void — three vertical bobs in the void ───────
+            new MetalBob(39 * TILE,  6 * TILE, { axis: "y", range: 4 * TILE, speed: 4.0, startOffset: 0.2 }),
             // Staggered phases so they don't align — player can never predict safe gaps
-            // new MetalBob( 89 * TILE,  4 * TILE, { axis: "y", range: 6 * TILE, speed: 5.0, startOffset: 0.0 }),
-            // new MetalBob( 96 * TILE,  2 * TILE, { axis: "y", range: 8 * TILE, speed: 5.5, startOffset: 0.33 }),
-            // new MetalBob(103 * TILE,  4 * TILE, { axis: "y", range: 6 * TILE, speed: 6.0, startOffset: 0.66 }),
+            new MetalBob( 89 * TILE,  4 * TILE, { axis: "y", range: 6 * TILE, speed: 5.0, startOffset: 0.0 }),
+            new MetalBob( 96 * TILE,  2 * TILE, { axis: "y", range: 8 * TILE, speed: 5.5, startOffset: 0.33 }),
+            new MetalBob(103 * TILE,  4 * TILE, { axis: "y", range: 6 * TILE, speed: 6.0, startOffset: 0.66 }),
+        ],
+    };
+}
+
+export function createPlatformsLevel8(TILE) {
+    return {
+        bridges: [
+            new MovingBridge(104 * TILE, 6 * TILE, { axis: "x", range: 8 * TILE, speed: 3.8, startOffset: 0.0 }),
+
+            new MovingBridge(138 * TILE, 12 * TILE, { axis: "x", range: 8 * TILE, speed: 2.2, startOffset: 0.0 }),
+        ],
+        bobs: [
+
+            // * ── Zone 5: Spike Corridor ─────────────────────────────────────────
+            new MetalBob(102 * TILE, 10 * TILE, { axis: "x", range: 8 * TILE, speed: 3.5, startOffset: 0.0  }),
+            new MetalBob(109 * TILE, 10 * TILE, { axis: "x", range: 8 * TILE, speed: 3.5, startOffset: 0.5  }),
+
+            // * ── Zone 6: Sky Pillars ────────────────────────────────────────────
+            new MetalBob(129 * TILE, 2 * TILE, { axis: "y", range: 9 * TILE, speed: 5.0, startOffset: 0.6 }),
         ],
     };
 }

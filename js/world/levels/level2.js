@@ -27,6 +27,7 @@ export function createMap() {
 
     // SECTION 1 — Opening ground / safe intro
     map[12][4]  = 6;   // cactus
+    map[12][5] = 12;  // starting
     map[12][7]  = 9;   // rock
     map[12][11] = 13;  // crystal
     map[12][15] = 16;  // grass
