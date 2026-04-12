@@ -76,8 +76,8 @@ export class Player {
     }
 
     update() {
-        // Reset bridge-riding flag; MovingBridge.carryPlayer() sets it back
-        // to true each frame if the player is still standing on a bridge.
+        // ! Reset bridge-riding flag; MovingBridge.carryPlayer() sets it back
+        // ! to true each frame if the player is still standing on a bridge.
         this.onBridge = false;
 
         if (this.sinking) {
@@ -152,7 +152,7 @@ export class Player {
         }
     }
 
-    // Phase 12: mutates cached object — no allocation per frame
+    // * Phase 12: mutates cached object — no allocation per frame
     getPickupBounds() {
         const offsetX = Math.round((this.width - SPRITE_W) / 2);
         const offsetY = this.height - SPRITE_H;
@@ -362,8 +362,6 @@ export class Player {
     }
 
     getCurrentFrame() {
-        // While riding a moving bridge the player is physically grounded —
-        // never show the jump/fall sprite regardless of velY direction.
         if (this.isJumping && !this.onBridge)
             return this.velY < 0 ? FRAMES.jumpUp : FRAMES.jumpDown;
         if (this.isMoving)
@@ -372,9 +370,9 @@ export class Player {
     }
 
     draw(ctx, camera) {
-        // Invincibility flicker
+        // * Invincibility flicker
         if (!this.sinking && this.dead) {
-            // Static dead pose — fall through to draw below
+            // * Static dead pose — fall through to draw below
         } else if (this.invincible > 0 && Math.floor(this.invincible / 5) % 2 === 0) {
             return;
         }
@@ -393,7 +391,7 @@ export class Player {
         const finalX = Math.round(anchorX - SPRITE_W / 2 + (frame.ox || 0));
         const finalY = Math.round(anchorY - SPRITE_H + (frame.oy || 0));
 
-        // Phase 12: no ctx.save/restore — caller sets imageSmoothingEnabled = false
+        // * Phase 12: no ctx.save/restore — caller sets imageSmoothingEnabled = false
         if (this.facing === -1) {
             ctx.transform(-1, 0, 0, 1, anchorX * 2, 0);
             ctx.drawImage(
