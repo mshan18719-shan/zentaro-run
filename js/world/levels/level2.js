@@ -1,37 +1,26 @@
-// ══════════════════════════════════════════════════════════════
-//  world/levels/level2.js
-//  Everything for Level 2: map, platforms, coins, boxes, stars, enemies.
-// ══════════════════════════════════════════════════════════════
-
 import { FlyEnemy, WalkerEnemy, JumperEnemy, PatrolEnemy } from "../../entities/enemy.js";
 import { Coin, TreasureBox, Star } from "../../entities/coin.js";
 import { createPlatformsLevel2 } from "../platform.js";
 
-// ── Door position ─────────────────────────────────────────────
+// * ── Door position ───
 export const DOOR = { col: 147, midRow: 13, topRow: 12 };
 
-// ── Platform factory ──────────────────────────────────────────
+// * ── Platform factory ───
 export { createPlatformsLevel2 as createLevelPlatforms };
 
-// ══════════════════════════════════════════════════════════════
-//  MAP
-// ══════════════════════════════════════════════════════════════
+// * MAP
 export function createMap() {
     const rows = 15;
     const cols = 150;
 
     const map = Array.from({ length: rows }, () => new Int8Array(cols));
 
-    // Ground floor
+    // * Ground floor
     for (let x = 0; x < cols; x++) map[14][x] = 1;
 
-    // SECTION 1 — Opening ground / safe intro
-    map[12][4]  = 6;   // cactus
-    map[12][5] = 12;  // starting
-    map[12][7]  = 9;   // rock
-    map[12][11] = 13;  // crystal
-    map[12][15] = 16;  // grass
-    map[12][19] = 6;   // cactus
+    // * SECTION 1 — Opening ground / safe intro
+
+    map[12][5] = 12;  // * Starting Board
 
     map[5][24] = 21; map[5][25] = 22; map[5][26] = 22; map[5][27] = 22; map[5][28] = 23;
 
@@ -41,38 +30,31 @@ export function createMap() {
     map[9][30] = 1; map[9][31] = 1; map[9][32] = 1; map[9][33] = 1;
     map[10][30] = 15; map[10][31] = 15; map[10][32] = 15; map[10][33] = 15;
 
-    map[12][36] = 13;
-    map[12][38] = 16;
-
-    // SECTION 2 — First staircase / elevation
-    map[13][41] = 1; map[14][41] = 8;
-    map[12][42] = 1; map[13][42] = 8; map[14][42] = 8;
-    map[11][43] = 1; map[12][43] = 8; map[13][43] = 8; map[14][43] = 8;
+    // * SECTION 2 — First staircase / elevation
+    map[13][40] = 1; map[13][41] = 1; map[14][41] = 8; map[14][40] = 8;
+    map[12][42] = 8; map[13][42] = 8; map[14][42] = 8;
+    map[11][42] = 1; map[11][43] = 1; map[12][43] = 8; map[13][43] = 8; map[14][43] = 8;
     map[10][44] = 1; map[11][44] = 8; map[12][44] = 8; map[13][44] = 8; map[14][44] = 8;
 
-    // Water
+    // ? Water
     for (let x = 45; x <= 50; x++) map[14][x] = 3;
 
-    // SECTION 3 — Long river with bridge crossings
+    // * SECTION 3 — Long river with bridge crossings
     for (let x = 58; x <= 84; x++) map[14][x] = 3;
 
-    // Bridge / stepping crossing 1
+    // * Bridge / stepping crossing 1
     map[11][60] = 1; map[11][61] = 1;
     map[10][65] = 1; map[10][66] = 1;
     map[11][70] = 1; map[11][71] = 1;
 
-    // Side decorations before/after river
-    map[12][56] = 13;
-    map[12][86] = 6;
-
-    // SECTION 4 — After river: mixed hurdles
+    // * SECTION 4 — After river: mixed hurdles
     map[4][87] = 1; map[4][89] = 1; map[4][91] = 1; map[4][93] = 1; map[4][95] = 1;
-    map[5][87] = 15; map[5][89] = 15; map[5][91] = 15; map[5][93] = 15; map[5][95] = 15;
+    map[5][87] = 15; map[5][91] = 15; map[5][95] = 15;
 
     map[9][86] = 1; map[9][88] = 1; map[9][90] = 1; map[9][92] = 1; map[9][94] = 1;
-    map[10][86] = 15; map[10][88] = 15; map[10][90] = 15; map[10][92] = 15; map[10][94] = 15;
+    map[10][86] = 15; map[10][90] = 15; map[10][94] = 15;
 
-    // SECTION 5 — Broken floor + narrow safe spaces
+    // * SECTION 5 — Broken floor + narrow safe spaces
     for (let x = 104; x <= 119; x++) map[14][x] = 3;
 
     map[8][102] = 1; map[8][103] = 1;
@@ -88,34 +70,51 @@ export function createMap() {
     for (let x = 102; x <= 118; x++) map[4][x] = 8;
     for (let x = 102; x <= 116; x++) map[3][x] = 1;
 
-    // SECTION 6 — Final staircase to end zone
+    // * SECTION 6 — Final staircase to end zone
     for (let x = 121; x <= 141; x++) map[14][x] = 25; // black-hole floor
     for (let x = 123; x <= 137; x++) map[10][x] = 1;
 
-    // Safe ground strip before door
+    // * Safe ground strip before door
     for (let x = 142; x <= 149; x++) map[14][x] = 1;
-    map[12][143] = 16;  // grass
-    map[12][145] = 13;  // crystal
 
-    // Door at col 147
-    map[12][146] = 24;
+    // todo: Decoration
+    // * Mashrooms
+    map[2][91] = 10; map[2][95] = 11; map[1][107] = 11;
+    map[7][88] = 11; map[7][92] = 10; 
+    // * Rock
+    map[12][7] = 9; map[3][24] = 9;
+    map[12][98] = 9; map[12][100] = 9;
+    map[9][42] = 9; map[8][130] = 9;
+    // * Grass
+    map[3][26] = 16; map[12][38] = 16;
+    map[12][15] = 16; map[7][32] = 16; map[12][96] = 16;
+    map[1][103] = 16; map[1][104] = 16; map[1][105] = 16; 
+    map[8][129] = 16; map[8][132] = 16; map[12][143] = 16;
+    // * Cactus
+    map[12][4] = 6; map[12][19] = 6;
+    map[12][33] = 6; map[12][54] = 6; map[12][86] = 6;
+    map[1][113] = 6; map[12][142] = 6;
+    map[8][125] = 6; map[8][135] = 6;
+    // * Crystal
+    map[12][11] = 13; map[12][36] = 13;
+    map[12][56] = 13; map[12][52] = 13;  map[12][89] = 13; map[1][111] = 13;
+
+    // ! Door at col 147
+    map[12][145] = 24;
     map[12][147] = 5;
     map[13][147] = 4;
 
     return map;
 }
 
-// ══════════════════════════════════════════════════════════════
-//  ENTITIES
-// ══════════════════════════════════════════════════════════════
 export function createLevelEntities(map, TILE, player) {
     const coinDefs = [
         { col: 12, row: 12 }, { col: 13, row: 12 }, { col: 14, row: 12 },
-        { col: 24, row: 4 },  { col: 25, row: 4 },  { col: 26, row: 4 },  { col: 27, row: 4 },
-        { col: 24, row: 8 },  { col: 24, row: 9 },  { col: 24, row: 10 },
-        { col: 27, row: 8 },  { col: 27, row: 9 },  { col: 27, row: 10 },
-        { col: 33, row: 3 },  { col: 33, row: 4 },
-        { col: 47, row: 7 },  { col: 48, row: 8 },  { col: 49, row: 9 },  { col: 50, row: 10 },
+        { col: 24, row: 4 }, { col: 25, row: 4 }, { col: 26, row: 4 }, { col: 27, row: 4 },
+        { col: 24, row: 8 }, { col: 24, row: 9 }, { col: 24, row: 10 },
+        { col: 27, row: 8 }, { col: 27, row: 9 }, { col: 27, row: 10 },
+        { col: 33, row: 3 }, { col: 33, row: 4 },
+        { col: 47, row: 7 }, { col: 48, row: 8 }, { col: 49, row: 9 }, { col: 50, row: 10 },
         { col: 108, row: 2 }, { col: 109, row: 2 }, { col: 110, row: 2 }, { col: 111, row: 2 },
         { col: 126, row: 3 }, { col: 126, row: 4 }, { col: 126, row: 5 },
         { col: 133, row: 3 }, { col: 133, row: 4 }, { col: 133, row: 5 },

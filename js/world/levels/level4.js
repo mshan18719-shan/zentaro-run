@@ -1,54 +1,33 @@
-// ══════════════════════════════════════════════════════════════
-//  world/levels/level4.js
-//  Everything for Level 4: map, platforms, coins, boxes, stars, enemies.
-//  ✦ Replace the stub createMap() below with your actual level 4 layout.
-// ══════════════════════════════════════════════════════════════
-
 import { FlyEnemy, WalkerEnemy, JumperEnemy, PatrolEnemy } from "../../entities/enemy.js";
 import { Coin, TreasureBox, Star } from "../../entities/coin.js";
-import { createPlatformsLevel4 } from "../platform.js"; // swap for createPlatformsLevel4 when ready
+import { createPlatformsLevel4 } from "../platform.js";
 
-// ── Door position ─────────────────────────────────────────────
+// * ── Door position ───
 export const DOOR = { col: 148, midRow: 13, topRow: 12 };
 
-// ── Platform factory ──────────────────────────────────────────
+// * ── Platform factory ───
 export { createPlatformsLevel4 as createLevelPlatforms };
 
-// ══════════════════════════════════════════════════════════════
-//  MAP  ← put your Level 4 tile layout here
-// ══════════════════════════════════════════════════════════════
 export function createMap() {
     const rows = 15;
     const cols = 150;
 
     const map = Array.from({ length: rows }, () => new Int8Array(cols));
 
-    // Ground floor
+    // * Ground floor
     for (let x = 0; x < cols; x++) map[14][x] = 1;
 
-    // Starting board + big cactus landmark
+    // * Starting board + big cactus landmark
     map[12][7] = 12;
     map[11][3] = 7;
 
-    // Two small platforms player can hop to for safety
+    // * Two small platforms player can hop to for safety
     map[7][1] = 1; map[7][2] = 1; map[7][3] = 1;
     map[8][1] = 15; map[8][2] = 15; map[8][3] = 15;
 
-    // Crystal & rock decorations
-    map[12][9] = 9;   // rock
-    map[12][12] = 6;   // cactus
-    map[12][13] = 9;   // rock
-    map[12][17] = 17;  // fence
-    map[12][18] = 18;  // fence brokem
-    map[12][22] = 16;  // grass
-    map[12][27] = 6;  // cactus
-    map[12][29] = 13;  // crystal
-
     map[9][15] = 1; map[9][17] = 1; map[9][19] = 1; map[9][21] = 1; map[9][23] = 1;
 
-    // River cols 42–57
-    map[12][40] = 6; map[12][42] = 9;
-    map[3][65] = 10; map[3][67] = 11;
+    // * River cols 42–57
     for (let x = 31; x <= 37; x++) map[14][x] = 3;
     for (let x = 44; x <= 50; x++) map[14][x] = 3;
     for (let x = 57; x <= 110; x++) map[14][x] = 3;
@@ -85,8 +64,34 @@ export function createMap() {
 
     for (let x = 138; x <= 142; x++) map[10][x] = 1;
 
+    // todo: Decoration
 
-    // Door
+    // * Fences
+    map[12][17] = 17; map[12][18] = 18;
+    map[1][103] = 17; map[1][104] = 18;
+
+    // * Mashrooms
+    map[7][17] = 10; map[7][19] = 11; map[7][21] = 10;
+    map[3][65] = 10; map[3][67] = 11;
+    map[12][54] = 11; map[8][140] = 11;
+
+    // * Cactus decorations
+    map[12][12] = 6; map[12][27] = 6; map[12][40] = 6;
+    map[7][119] = 6; map[12][124] = 6; map[12][131] = 6;
+
+    // * Rocks
+    map[12][9] = 9; map[12][13] = 9; map[12][42] = 9;
+     map[5][85] = 9; map[5][98] = 9; map[1][115] = 9;
+
+    // * Crystals
+    map[12][29] = 13; map[1][107] = 13; map[1][109] = 13;
+    map[12][117] = 13; map[12][123] = 13; map[8][139] = 13;
+
+    // * Grass
+    map[12][22] = 16; map[12][52] = 16; map[1][110] = 16;
+    map[8][64] = 16; map[8][67] = 16; map[5][74] = 16; map[5][86] = 16;
+
+    // ! Door
     map[12][146] = 24;
     map[12][148] = 5;
     map[13][148] = 4;
@@ -94,9 +99,6 @@ export function createMap() {
     return map;
 }
 
-// ══════════════════════════════════════════════════════════════
-//  ENTITIES  ← put your Level 4 enemies / coins / stars here
-// ══════════════════════════════════════════════════════════════
 export function createLevelEntities(map, TILE, player) {
     const coinDefs = [
         { col: 20, row: 7 },  { col: 23, row: 7 },

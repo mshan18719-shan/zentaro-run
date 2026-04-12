@@ -37,7 +37,7 @@ export class Player {
         this.tileSize = tileSize;
 
         this.width = 75;
-        this.height = 150;
+        this.height = 148;
         this.speed = 5;
         this.velX = 0;
         this.velY = 0;

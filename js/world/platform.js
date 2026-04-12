@@ -1,7 +1,7 @@
 // * Tuneable constants  (edit these to resize / retime things)
 export const BRIDGE_W = 150;   // px — rendered width  of the bridge sprite
 export const BRIDGE_H = 40;   // px — rendered height of the bridge sprite
-export const METALBOB_SIZE = 170;   // px — rendered size   of the metal bob (square)
+export const METALBOB_SIZE = 150;   // px — rendered size   of the metal bob (square)
 
 // ? Water animation
 const WATER_SCROLL_SPEED = 0.6;   // px/frame — how fast the wave pattern scrolls

@@ -1,44 +1,31 @@
-// ══════════════════════════════════════════════════════════════
-//  world/levels/level5.js
-//  Everything for Level 5: map, platforms, coins, boxes, stars, enemies.
-//  ✦ Replace the stub createMap() below with your actual level 5 layout.
-// ══════════════════════════════════════════════════════════════
-
 import { FlyEnemy, WalkerEnemy, JumperEnemy, PatrolEnemy } from "../../entities/enemy.js";
 import { Coin, TreasureBox, Star } from "../../entities/coin.js";
 import { createPlatformsLevel5 } from "../platform.js"; // swap for createPlatformsLevel5 when ready
 
-// ── Door position ─────────────────────────────────────────────
+// * ── Door position ───
 export const DOOR = { col: 147, midRow: 13, topRow: 12 };
 
-// ── Platform factory ──────────────────────────────────────────
+// * ── Platform factory ───
 export { createPlatformsLevel5 as createLevelPlatforms };
 
-// ══════════════════════════════════════════════════════════════
-//  MAP  ← put your Level 5 tile layout here
-// ══════════════════════════════════════════════════════════════
 export function createMap() {
     const rows = 15;
     const cols = 150;
 
     const map = Array.from({ length: rows }, () => new Int8Array(cols));
 
-    // Ground floor
+    // * Ground floor
     for (let x = 0; x < cols; x++) map[14][x] = 1;
 
-    // Starting board + big cactus landmark
-    map[12][1] = 12;
-    map[11][3] = 7;
+    // * Starting board + big cactus landmark
+    map[11][1] = 7;
+    map[12][3] = 12;
 
-    // Two small platforms player can hop to for safety
+    // * Two small platforms player can hop to for safety
     map[9][15] = 1; map[9][16] = 1; map[9][17] = 1; map[9][18] = 1; map[9][19] = 1;
     map[10][16] = 15; map[10][17] = 15; map[10][18] = 15;
 
-    // Crystal & rock decorations
-    map[12][9] = 9;   // rock
-    map[12][18] = 13;  // crystal
-
-    // River cols 42–57
+    // * River cols 42–57
     for (let x = 40; x <= 46; x++) map[12][x] = 1;
     for (let y = 13; y <= 14; y++) map[y][40] = 8;
     for (let y = 13; y <= 14; y++) map[y][41] = 8;
@@ -48,19 +35,48 @@ export function createMap() {
     for (let y = 13; y <= 14; y++) map[y][45] = 8;
     for (let y = 13; y <= 14; y++) map[y][46] = 8;
 
-    // Tower 1 — cols 63–64
+    // * Tower 1 — cols 63–64
     for (let x = 47; x <= 63; x++) map[13][x] = 1;
     for (let x = 47; x <= 63; x++) map[14][x] = 8;
     map[8][70] = 21; map[8][71] = 22; map[8][72] = 22; map[8][73] = 22; map[8][74] = 23;
     for (let x = 64; x <= 100; x++) map[14][x] = 3;
 
-    // Fortress floor cols 80–115
+    // * Fortress floor cols 80–115
     for (let x = 110; x <= 135; x++) map[14][x] = 25;
     for (let x = 115; x <= 117; x++) map[9][x] = 1;
     for (let x = 123; x <= 125; x++) map[9][x] = 1;
     for (let x = 130; x <= 132; x++) map[9][x] = 1;
 
-    // Door
+    // todo: Decoration
+
+    // * Fences
+    map[12][28] = 17; map[12][29] = 18;
+
+    // * Mashrooms
+    map[7][15] = 10; map[7][16] = 11;
+    map[7][18] = 10; map[7][19] = 11;
+    map[10][40] = 10; map[10][42] = 11; map[10][44] = 10; map[10][46] = 11;
+
+    // * Cactus decorations
+     map[12][11] = 6; map[11][62] = 6; map[12][108] = 6;
+
+    // * Rocks
+    map[12][9] = 9; map[12][12] = 9; map[11][48] = 9; 
+    map[12][101] = 9; map[12][102] = 9; 
+
+    // * Crystals
+    map[12][18] = 13; map[12][39] = 13; map[11][60] = 13;
+    map[12][137] = 13; map[12][139] = 13;
+
+    // * Grass
+    map[12][22] = 16; map[12][23] = 16;
+    map[12][33] = 16; map[12][34] = 16;
+    map[11][47] = 16; map[11][50] = 16; map[11][58] = 16;
+    map[7][116] = 16; map[7][124] = 16; map[7][131] = 16;
+    map[12][142] = 16;
+
+    // ! Door
+    map[11][141] = 7;
     map[12][145] = 24;
     map[12][147] = 5;
     map[13][147] = 4;
@@ -68,9 +84,6 @@ export function createMap() {
     return map;
 }
 
-// ══════════════════════════════════════════════════════════════
-//  ENTITIES  ← put your Level 5 enemies / coins / stars here
-// ══════════════════════════════════════════════════════════════
 export function createLevelEntities(map, TILE, player) {
     const coinDefs = [
         { col: 17, row: 3 },

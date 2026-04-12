@@ -1,50 +1,38 @@
-// ══════════════════════════════════════════════════════════════
-//  world/levels/level3.js  —  "Inferno Fortress"
-//  Everything for Level 3: map, platforms, coins, boxes, stars, enemies.
-// ══════════════════════════════════════════════════════════════
-
 import { FlyEnemy, WalkerEnemy, JumperEnemy, PatrolEnemy } from "../../entities/enemy.js";
 import { Coin, TreasureBox, Star } from "../../entities/coin.js";
 import { createPlatformsLevel3 } from "../platform.js";
 
-// ── Door position ─────────────────────────────────────────────
+// * ── Door position ───
 export const DOOR = { col: 147, midRow: 13, topRow: 12 };
 
-// ── Platform factory ──────────────────────────────────────────
+// * ── Platform factory ───
 export { createPlatformsLevel3 as createLevelPlatforms };
 
-// ══════════════════════════════════════════════════════════════
-//  MAP
-// ══════════════════════════════════════════════════════════════
 export function createMap() {
     const rows = 15;
     const cols = 150;
 
     const map = Array.from({ length: rows }, () => new Int8Array(cols));
 
-    // Ground floor
+    // * Ground floor
     for (let x = 0; x < cols; x++) map[14][x] = 1;
 
-    // Starting board + big cactus landmark
+    // * Starting board + big cactus landmark
     map[12][1] = 12;
     map[11][3] = 7;
 
-    // Two small platforms player can hop to for safety
+    // * Two small platforms player can hop to for safety
     map[9][8] = 1; map[9][9] = 1; map[9][10] = 1;
     map[10][8] = 15; map[10][9] = 15; map[10][10] = 15;
 
-    // Crystal & rock decorations
-    map[12][9]  = 9;   // rock
-    map[12][18] = 13;  // crystal
-
-    // Gap 1 — black-hole floor cols 20–33
+    // * Gap 1 — black-hole floor cols 20–33
     for (let x = 20; x <= 33; x++) map[14][x] = 25;
     map[7][24] = 21; map[7][25] = 22; map[7][26] = 22; map[7][27] = 23;
     for (let x = 32; x <= 37; x++) map[4][x] = 1;
     for (let y = 5; y <= 14; y++) map[y][36] = 8;
     for (let y = 5; y <= 14; y++) map[y][37] = 8;
 
-    // River cols 42–57
+    // ? River cols 42–57
     for (let x = 42; x <= 57; x++) map[14][x] = 3;
     map[11][44] = 1;  // stone 1
     map[10][47] = 1;  // stone 2
@@ -52,97 +40,110 @@ export function createMap() {
     map[10][53] = 1;  // stone 4
     map[12][44] = 15; // spike on stone 1
     map[12][50] = 15; // spike on stone 3
-    map[12][40] = 6;  // cactus on bank
-    map[12][59] = 9;  // rock on far bank
 
-    // Tower 1 — cols 63–64 (rows 5–13)
+    // * Tower 1 — cols 63–64 (rows 5–13)
     for (let y = 5; y <= 14; y++) map[y][63] = 8;
     for (let y = 5; y <= 14; y++) map[y][64] = 8;
     for (let x = 61; x <= 65; x++) map[4][x] = 1;
     map[5][61] = 15; map[5][62] = 15; map[5][65] = 15;
 
-    // Mid platform between towers
+    // * Mid platform between towers
     for (let x = 68; x <= 69; x++) map[11][x] = 1;
 
-    // Tower 2 — cols 73–75 (rows 6–13)
+    // * Tower 2 — cols 73–75 (rows 6–13)
     for (let y = 6; y <= 14; y++) map[y][73] = 8;
     for (let y = 6; y <= 14; y++) map[y][74] = 8;
     for (let y = 6; y <= 14; y++) map[y][75] = 8;
     map[5][72] = 1; map[5][73] = 1; map[5][74] = 1; map[5][75] = 1; map[5][76] = 1;
     map[6][72] = 15; map[6][76] = 15;
 
-    // Crystal decorations on tower tops
-    map[3][63] = 13;
-    map[4][74] = 13;
-
-    // Fortress floor cols 80–115
+    // * Fortress floor cols 80–115
     for (let x = 80; x <= 115; x++) map[14][x] = 8;
     for (let x = 80; x <= 113; x++) map[13][x] = 1;
     for (let y = 9; y <= 13; y++) map[y][114] = 8;
     for (let y = 9; y <= 13; y++) map[y][115] = 8;
     map[8][114] = 1; map[8][115] = 1;
 
-    // Safe landing strip off fortress
+    // * Safe landing strip off fortress
     for (let x = 129; x <= 131; x++) map[14][x] = 1;
 
-    // Water pit cols 132–139
+    // ? Water pit cols 132–139
     for (let x = 132; x <= 139; x++) map[14][x] = 3;
 
-    // Final safe ground before door
+    // * Final safe ground before door
     for (let x = 143; x <= 149; x++) map[14][x] = 1;
-    map[12][143] = 16;  // grass
-    map[12][145] = 13;  // crystal
-    map[11][144] = 7;   // big cactus
 
-    // Door at col 147
-    map[12][146] = 24;
+    // todo: Decoration
+
+    // * Fences
+    map[11][92] = 17; map[11][93] = 18;
+
+    // * Mashrooms
+    map[2][34] = 11; map[2][35] = 11;
+    map[11][96] = 11; map[11][104] = 10;
+
+    // * Cactus decorations
+    map[12][16] = 6; map[12][34] = 6; map[12][40] = 6; map[12][78] = 6;
+    map[12][124] = 6; map[11][144] = 7;
+
+    // * Rocks
+    map[12][59] = 9; map[12][9] = 9; map[12][116] = 9;
+
+    // * Crystals
+    map[12][18] = 13; map[12][62] = 13; map[2][63] = 13; map[3][74] = 13;
+    map[12][69] = 13; map[11][83] = 13; map[12][123] = 13; map[12][126] = 13;
+
+    // * Grass
+    map[12][7] = 16; map[5][26] = 16; map[12][143] = 16;
+    map[12][67] = 16; map[12][70] = 16; map[12][143] = 16;
+    map[11][94] = 16; map[11][97] = 16; map[11][102] = 16; map[11][105] = 16;
+
+    // ! Door at col 147
+    map[12][145] = 24;
     map[12][147] = 5;
     map[13][147] = 4;
 
     return map;
 }
 
-// ══════════════════════════════════════════════════════════════
-//  ENTITIES
-// ══════════════════════════════════════════════════════════════
 export function createLevelEntities(map, TILE, player) {
     const coinDefs = [
-        // Zone 1 — spike minefield
-        { col: 9,  row: 5 },
+        // * Zone 1 — spike minefield
+        { col: 9, row: 5 },
         { col: 13, row: 11 }, { col: 14, row: 11 }, { col: 15, row: 11 },
-        { col: 34, row: 2 },  { col: 36, row: 2 },
-        { col: 34, row: 9 },  { col: 34, row: 11 },
-        // Zone 2 — void gaps
+        { col: 34, row: 2 }, { col: 36, row: 2 },
+        { col: 34, row: 9 }, { col: 34, row: 11 },
+        // * Zone 2 — void gaps
         { col: 45, row: 6 }, { col: 47, row: 6 }, { col: 51, row: 7 }, { col: 53, row: 6 },
         { col: 59, row: 9 }, { col: 59, row: 11 },
         { col: 60, row: 8 }, { col: 60, row: 10 },
-        // Zone 3 — river stepping stones
+        // * Zone 3 — river stepping stones
         { col: 63, row: 2 }, { col: 73, row: 3 },
         { col: 65, row: 9 }, { col: 65, row: 11 }, { col: 65, row: 13 },
         { col: 71, row: 9 }, { col: 71, row: 11 }, { col: 71, row: 13 },
         { col: 76, row: 9 }, { col: 76, row: 11 }, { col: 76, row: 13 },
         { col: 78, row: 10 }, { col: 78, row: 12 },
-        // Zone 4 — tower tops
+        // * Zone 4 — tower tops
         { col: 87, row: 3 }, { col: 89, row: 3 },
-        // Zone 5 — black-hole valley pillars
-        { col: 95,  row: 9 }, { col: 97,  row: 9 }, { col: 99,  row: 9 },
+        // * Zone 5 — black-hole valley pillars
+        { col: 95, row: 9 }, { col: 97, row: 9 }, { col: 99, row: 9 },
         { col: 107, row: 9 }, { col: 109, row: 9 }, { col: 111, row: 9 },
-        // Zone 7 — final descent
+        // * Zone 7 — final descent
         { col: 119, row: 10 }, { col: 121, row: 9 }, { col: 123, row: 10 },
-        { col: 135, row: 9 },  { col: 135, row: 4 },
+        { col: 135, row: 9 }, { col: 135, row: 4 },
     ];
     const coins = coinDefs.map(({ col, row }) =>
         new Coin(col * TILE + (TILE - 28) / 2, row * TILE - 32)
     );
 
     const boxes = [
-        // Zone 5 black-hole valley
+        // * Zone 5 black-hole valley
         new TreasureBox(86, 8, TILE, (pts) => { player.score += pts; }),
         new TreasureBox(87, 8, TILE, (pts) => { player.score += pts; }),
         new TreasureBox(88, 8, TILE, (pts) => { player.score += pts; }),
         new TreasureBox(89, 8, TILE, (pts) => { player.score += pts; }),
         new TreasureBox(90, 8, TILE, (pts) => { player.score += pts; }),
-        // Zone 6 fortress
+        // * Zone 6 fortress
         new TreasureBox(129, 13, TILE, (pts) => { player.score += pts; }),
         new TreasureBox(130, 13, TILE, (pts) => { player.score += pts; }),
         new TreasureBox(130, 12, TILE, (pts) => { player.score += pts; }),
@@ -163,18 +164,18 @@ export function createLevelEntities(map, TILE, player) {
 
     const groundY = (map.length - 1) * TILE;
     const enemies = [
-        // FlyEnemies
+        // ! FlyEnemies
         new FlyEnemy(8 * TILE,   11 * TILE, map, TILE, { speed: 2.8, floatAmplitude: 24, floatSpeed: 0.055 }),
         new FlyEnemy(24 * TILE,  10 * TILE, map, TILE, { speed: 3.0, floatAmplitude: 28, floatSpeed: 0.060 }),
         new FlyEnemy(47 * TILE,  8 * TILE,  map, TILE, { speed: 3.2, floatAmplitude: 30, floatSpeed: 0.065 }),
         new FlyEnemy(63 * TILE,  2 * TILE,  map, TILE, { speed: 3.0, floatAmplitude: 22, floatSpeed: 0.060 }),
         new FlyEnemy(115 * TILE, 5 * TILE,  map, TILE, { speed: 3.5, floatAmplitude: 26, floatSpeed: 0.070 }),
 
-        // WalkerEnemies
+        // * WalkerEnemies
         new WalkerEnemy(19 * TILE,  groundY,     map, TILE, { speed: 2.5, dir: -1 }),
         new WalkerEnemy(112 * TILE, 13 * TILE,   map, TILE, { speed: 4.0, dir: -1 }),
 
-        // JumperEnemies
+        // ? JumperEnemies
         new JumperEnemy(13 * TILE,  groundY,     map, TILE, { jumpForce: -20, jumpInterval: 25 }),
         new JumperEnemy(34 * TILE,  groundY,     map, TILE, { jumpForce: -20, jumpInterval: 25 }),
         new JumperEnemy(47 * TILE,  10 * TILE,   map, TILE, { jumpForce: -16, jumpInterval: 25 }),
@@ -186,7 +187,7 @@ export function createLevelEntities(map, TILE, player) {
         new JumperEnemy(126 * TILE, groundY,     map, TILE, { jumpForce: -16, jumpInterval: 85 }),
         new JumperEnemy(141 * TILE, 11 * TILE,   map, TILE, { jumpForce: -13, jumpInterval: 90 }),
 
-        // PatrolEnemies
+        // * PatrolEnemies
         new PatrolEnemy(15 * TILE,  groundY,   map, TILE, { speed: 3.5, patrolLeft: 10 * TILE,  patrolRight: 19 * TILE }),
         new PatrolEnemy(24 * TILE,  7 * TILE,  map, TILE, { speed: 3.5, patrolLeft: 24 * TILE,  patrolRight: 27 * TILE }),
         new PatrolEnemy(34 * TILE,  2 * TILE,  map, TILE, { speed: 3.5, patrolLeft: 32 * TILE,  patrolRight: 38 * TILE }),

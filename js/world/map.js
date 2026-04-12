@@ -47,7 +47,7 @@ function _buildImageCache() {
 }
 
 // ? Non-solid tile IDs
-const NON_SOLID = new Set([2, 3, 6, 7, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 24, 25]);
+const NON_SOLID = new Set([6, 7, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 24]); //2, 3, 
 
 // * Phase 12: flat parallel arrays instead of object per tile type (cache-friendly)
 const _rW  = new Int16Array(BLOCK_COUNT); // draw width  (0 = use tileSize)

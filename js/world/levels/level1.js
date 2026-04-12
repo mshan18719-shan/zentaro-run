@@ -1,62 +1,49 @@
-// ══════════════════════════════════════════════════════════════
-//  world/levels/level1.js
-//  Everything for Level 1: map, platforms, coins, boxes, stars, enemies.
-//  To edit this level just work in this file — nothing else needs changing.
-// ══════════════════════════════════════════════════════════════
-
 import { FlyEnemy, WalkerEnemy, JumperEnemy, PatrolEnemy } from "../../entities/enemy.js";
 import { Coin, TreasureBox, Star } from "../../entities/coin.js";
 import { createPlatformsLevel1 } from "../platform.js";
 
-// ── Door position ─────────────────────────────────────────────
+// * ── Door position ───
 export const DOOR = { col: 138, midRow: 13, topRow: 12 };
 
-// ── Platform factory ──────────────────────────────────────────
+// * ── Platform factory ───
 export { createPlatformsLevel1 as createLevelPlatforms };
 
-// ══════════════════════════════════════════════════════════════
-//  MAP
-// ══════════════════════════════════════════════════════════════
+// * MAP
 export function createMap() {
     const rows = 15;
     const cols = 140;
 
     const map = Array.from({ length: rows }, () => new Int8Array(cols));
 
-    // Ground floor
+    // * Ground floor
     for (let x = 0; x < cols; x++) map[14][x] = 1;
 
-    // ── Original section (cols 0–99) ─────────────────────────
-    map[12][8] = 13;
+    // * Starting Decor
+    map[11][2] = 7;
+    map[12][6] = 12;
+
+    // * ── Original section (cols 0–99) ─────────────────────────
     map[9][21] = 1; map[9][22] = 1; map[9][23] = 1; map[9][24] = 1;
     map[10][21] = 15; map[10][22] = 15; map[10][23] = 15; map[10][24] = 15; // Spikes
 
     map[6][30] = 1; map[6][31] = 1; map[6][32] = 1; map[6][33] = 1; map[6][34] = 1;
     map[7][30] = 15; map[7][31] = 15; map[7][32] = 15; map[7][33] = 15; map[7][34] = 15; // Spikes
 
-    map[6][45] = 17; map[6][46] = 18;
     for (let x = 42; x <= 57; x++) map[8][x] = 1;
-    map[9][56] = 8; map[9][57] = 8;
-    map[10][56] = 8; map[10][57] = 8;
-    map[11][56] = 8; map[11][57] = 8;
-    map[12][56] = 8; map[12][57] = 8;
-    map[13][56] = 8; map[13][57] = 8;
+    for (let y = 9; y <= 14; y++) map[y][56] = 8;
+    for (let y = 9; y <= 14; y++) map[y][57] = 8;
 
     map[7][64] = 1; map[7][65] = 1; map[7][66] = 1; map[7][67] = 1;
     map[7][73] = 1; map[7][74] = 1; map[7][75] = 1; map[7][76] = 1;
 
+    // ? Water
     for (let x = 82; x <= 92; x++) map[14][x] = 3;
-
-    map[11][2] = 7;
-    map[12][6] = 12;
-
-    map[6][50] = 10; map[6][53] = 11;
 
     map[8][93] = 1; map[8][94] = 1;
     for (let y = 9; y <= 14; y++) map[y][93] = 8;
     for (let y = 9; y <= 14; y++) map[y][94] = 8;
 
-    // ── Extended section (cols 100–139) ──────────────────────
+    // * ── Extended section (cols 100–139) ──────────────────────
     for (let y = 0; y <= 9; y++) map[y][102] = 8;
     for (let y = 0; y <= 9; y++) map[y][103] = 8;
 
@@ -73,24 +60,37 @@ export function createMap() {
     for (let y = 10; y <= 14; y++) map[y][119] = 8;
     for (let y = 10; y <= 14; y++) map[y][120] = 8;
 
-    map[11][136] = 7; // Big cactus near end
+    // todo: Decoration
 
-    // Cactus decorations
+    // * Fences
+    map[6][45] = 17; map[6][46] = 18;
+
+    // * Mashrooms
+    map[6][50] = 10; map[6][53] = 11;
+
+    // * Cactus decorations
     map[12][13] = 6; map[12][28] = 6; map[12][47] = 6;
     map[6][56] = 6; map[12][63] = 6; map[12][123] = 6;
+    map[12][106] = 6;
 
-    // Rocks
+    // * Rocks
     map[12][14] = 9; map[12][54] = 9; map[12][78] = 9; map[12][98] = 9;
+    map[7][99] = 9; map[5][65] = 9; map[5][74] = 9;
 
-    // Crystals
+    // * Crystals
+    map[12][8] = 13;
     map[12][19] = 13; map[12][32] = 13; map[12][43] = 13;
     map[12][49] = 13; map[12][66] = 13; map[12][126] = 13;
+    map[12][108] = 13;
+    map[5][114] = 13;
 
-    // Grass
+    // * Grass
     map[12][22] = 16; map[12][37] = 16; map[12][71] = 16;
     map[12][77] = 16; map[12][95] = 16; map[12][133] = 16;
+    map[7][98] = 16; map[12][114] = 16; map[12][115] = 16;
 
-    // Door
+    // ! Door
+    map[11][136] = 7; // * Big cactus near end
     map[12][135] = 24;
     map[12][138] = 5;
     map[13][138] = 4;
@@ -98,9 +98,6 @@ export function createMap() {
     return map;
 }
 
-// ══════════════════════════════════════════════════════════════
-//  ENTITIES  (coins, boxes, stars, enemies)
-// ══════════════════════════════════════════════════════════════
 export function createLevelEntities(map, TILE, player) {
     const coinDefs = [
         { col: 15, row: 12 }, { col: 16, row: 12 }, { col: 17, row: 12 },
