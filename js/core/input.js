@@ -134,8 +134,8 @@ export function drawTouchControls(ctx, vw, vh) {
     const shortSide = Math.min(vw, vh);
 
     // * Your large sizes
-    const btnSize = Math.round(Math.max(130, Math.min(300, shortSide * 1.67)));
-    const jumpSize = Math.round(Math.max(140, Math.min(400, shortSide * 1.99)));
+    const btnSize = Math.round(Math.max(130, Math.min(220, shortSide * 1.24)));
+    const jumpSize = Math.round(Math.max(140, Math.min(330, shortSide * 1.49)));
 
     // * Fixed layout anchors
     const safeLeft = Math.max(24, Math.round(vw * 0.03));
