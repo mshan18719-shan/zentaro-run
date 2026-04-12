@@ -385,7 +385,7 @@ export class Player {
         const drawY = Math.round(this.y - camera.y);
 
         const anchorX = drawX + (this.width >> 1); // width/2 via bit-shift
-        const bridgeVisualDrop = this.onBridge ? 13 : 0;
+        const bridgeVisualDrop = this.onBridge ? 13 : 3;
         const anchorY = drawY + this.height - 6 + bridgeVisualDrop;
 
         const finalX = Math.round(anchorX - SPRITE_W / 2 + (frame.ox || 0));
