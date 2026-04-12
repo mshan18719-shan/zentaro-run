@@ -239,51 +239,51 @@ export function createLevelEntities(map, TILE, player) {
     const enemies = [
 
         // * ── Zone 1: Sky Start ─────────────────────────────────────
-        // new FlyEnemy(6 * TILE, 3 * TILE, map, TILE, { speed: 3.5, floatAmplitude: 18, floatSpeed: 0.06 }),
-        // new FlyEnemy(14 * TILE, 6 * TILE, map, TILE, { speed: 3.5, floatAmplitude: 18, floatSpeed: 0.06 }),
-        // new PatrolEnemy(2 * TILE, 6 * TILE, map, TILE, { speed: 4.5, patrolLeft: 0 * TILE, patrolRight: 9 * TILE }),
-        // new PatrolEnemy(15 * TILE, 4 * TILE, map, TILE, { speed: 4.5, patrolLeft: 15 * TILE, patrolRight: 23 * TILE }),
-        // new PatrolEnemy(11 * TILE, 10 * TILE, map, TILE, { speed: 4.5, patrolLeft: 6 * TILE, patrolRight: 21 * TILE }),
-        // new PatrolEnemy(3 * TILE, 10 * TILE, map, TILE, { speed: 5.0, patrolLeft: 0 * TILE, patrolRight: 16 * TILE }),
-        // new PatrolEnemy(17 * TILE, groundY, map, TILE, { speed: 4.0, patrolLeft: 0 * TILE, patrolRight: 21 * TILE }),
-        // new JumperEnemy(8 * TILE, 5 * TILE, map, TILE, { jumpForce: -16, jumpInterval: 30 }),
-        // new JumperEnemy(13 * TILE, 10 * TILE, map, TILE, { jumpForce: -16, jumpInterval: 28 }),
+        new FlyEnemy(6 * TILE, 3 * TILE, map, TILE, { speed: 3.5, floatAmplitude: 18, floatSpeed: 0.06 }),
+        new FlyEnemy(14 * TILE, 6 * TILE, map, TILE, { speed: 3.5, floatAmplitude: 18, floatSpeed: 0.06 }),
+        new PatrolEnemy(2 * TILE, 6 * TILE, map, TILE, { speed: 4.5, patrolLeft: 0 * TILE, patrolRight: 9 * TILE }),
+        new PatrolEnemy(15 * TILE, 4 * TILE, map, TILE, { speed: 4.5, patrolLeft: 15 * TILE, patrolRight: 23 * TILE }),
+        new PatrolEnemy(11 * TILE, 10 * TILE, map, TILE, { speed: 4.5, patrolLeft: 6 * TILE, patrolRight: 21 * TILE }),
+        new PatrolEnemy(3 * TILE, 10 * TILE, map, TILE, { speed: 5.0, patrolLeft: 0 * TILE, patrolRight: 16 * TILE }),
+        new PatrolEnemy(17 * TILE, groundY, map, TILE, { speed: 4.0, patrolLeft: 0 * TILE, patrolRight: 21 * TILE }),
+        new JumperEnemy(8 * TILE, 5 * TILE, map, TILE, { jumpForce: -16, jumpInterval: 30 }),
+        new JumperEnemy(13 * TILE, 10 * TILE, map, TILE, { jumpForce: -16, jumpInterval: 28 }),
 
         // * ── Zone 2: Checkerboard Hell ─────────────────────────────
-        // new FlyEnemy(29 * TILE, 9 * TILE, map, TILE, { speed: 4.0, floatAmplitude: 24, floatSpeed: 0.07 }),
-        // new FlyEnemy(43 * TILE, 9 * TILE, map, TILE, { speed: 4.0, floatAmplitude: 24, floatSpeed: 0.07 }),
-        // new FlyEnemy(35 * TILE, 4 * TILE, map, TILE, { speed: 4.5, floatAmplitude: 20, floatSpeed: 0.07 }),
-        // new FlyEnemy(47 * TILE, 4 * TILE, map, TILE, { speed: 4.5, floatAmplitude: 20, floatSpeed: 0.07 }),
-        // new PatrolEnemy(34 * TILE, 5 * TILE, map, TILE, { speed: 5.0, patrolLeft: 33 * TILE, patrolRight: 37 * TILE }),
-        // new PatrolEnemy(45 * TILE, 5 * TILE, map, TILE, { speed: 5.5, patrolLeft: 44 * TILE, patrolRight: 48 * TILE }),
-        // new PatrolEnemy(39 * TILE, groundY, map, TILE, { speed: 5.5, patrolLeft: 39 * TILE, patrolRight: 45 * TILE }),
-        // new PatrolEnemy(49 * TILE, groundY, map, TILE, { speed: 5.5, patrolLeft: 49 * TILE, patrolRight: 54 * TILE }),
+        new FlyEnemy(29 * TILE, 9 * TILE, map, TILE, { speed: 4.0, floatAmplitude: 24, floatSpeed: 0.07 }),
+        new FlyEnemy(43 * TILE, 9 * TILE, map, TILE, { speed: 4.0, floatAmplitude: 24, floatSpeed: 0.07 }),
+        new FlyEnemy(35 * TILE, 4 * TILE, map, TILE, { speed: 4.5, floatAmplitude: 20, floatSpeed: 0.07 }),
+        new FlyEnemy(47 * TILE, 4 * TILE, map, TILE, { speed: 4.5, floatAmplitude: 20, floatSpeed: 0.07 }),
+        new PatrolEnemy(34 * TILE, 5 * TILE, map, TILE, { speed: 5.0, patrolLeft: 33 * TILE, patrolRight: 37 * TILE }),
+        new PatrolEnemy(45 * TILE, 5 * TILE, map, TILE, { speed: 5.5, patrolLeft: 44 * TILE, patrolRight: 48 * TILE }),
+        new PatrolEnemy(39 * TILE, groundY, map, TILE, { speed: 5.5, patrolLeft: 39 * TILE, patrolRight: 45 * TILE }),
+        new PatrolEnemy(49 * TILE, groundY, map, TILE, { speed: 5.5, patrolLeft: 49 * TILE, patrolRight: 54 * TILE }),
 
         // * ── Zone 3: Reverse Climb ─────────────────────────────────
-        // new PatrolEnemy(57 * TILE, 10 * TILE, map, TILE, { speed: 5.0, patrolLeft: 57 * TILE, patrolRight: 60 * TILE }),
-        // new PatrolEnemy(61 * TILE, 7 * TILE, map, TILE, { speed: 5.5, patrolLeft: 61 * TILE, patrolRight: 64 * TILE }),
-        // new PatrolEnemy(65 * TILE, 4 * TILE, map, TILE, { speed: 6.0, patrolLeft: 65 * TILE, patrolRight: 68 * TILE }),
-        // new PatrolEnemy(72 * TILE, groundY, map, TILE, { speed: 5.5, patrolLeft: 63 * TILE, patrolRight: 74 * TILE }),
-        // new PatrolEnemy(75 * TILE, 3 * TILE, map, TILE, { speed: 6.5, patrolLeft: 71 * TILE, patrolRight: 78 * TILE }),
-        // new FlyEnemy(63 * TILE, 7 * TILE, map, TILE, { speed: 4.5, floatAmplitude: 20, floatSpeed: 0.08 }),
-        // new JumperEnemy(69 * TILE, 9 * TILE, map, TILE, { jumpForce: -17, jumpInterval: 40 }),
+        new PatrolEnemy(57 * TILE, 10 * TILE, map, TILE, { speed: 5.0, patrolLeft: 57 * TILE, patrolRight: 60 * TILE }),
+        new PatrolEnemy(61 * TILE, 7 * TILE, map, TILE, { speed: 5.5, patrolLeft: 61 * TILE, patrolRight: 64 * TILE }),
+        new PatrolEnemy(65 * TILE, 4 * TILE, map, TILE, { speed: 6.0, patrolLeft: 65 * TILE, patrolRight: 68 * TILE }),
+        new PatrolEnemy(72 * TILE, groundY, map, TILE, { speed: 5.5, patrolLeft: 63 * TILE, patrolRight: 74 * TILE }),
+        new PatrolEnemy(75 * TILE, 3 * TILE, map, TILE, { speed: 6.5, patrolLeft: 71 * TILE, patrolRight: 78 * TILE }),
+        new FlyEnemy(63 * TILE, 7 * TILE, map, TILE, { speed: 4.5, floatAmplitude: 20, floatSpeed: 0.08 }),
+        new JumperEnemy(69 * TILE, 9 * TILE, map, TILE, { jumpForce: -17, jumpInterval: 40 }),
 
         // * ── Zone 4: Bridge-Only Void ──────────────────────────────
-        // new JumperEnemy(81 * TILE, 9 * TILE, map, TILE, { jumpForce: -17, jumpInterval: 40 }),
-        // new JumperEnemy(107 * TILE, 9 * TILE, map, TILE, { jumpForce: -17, jumpInterval: 40 }),
-        // new FlyEnemy(92 * TILE, 5 * TILE, map, TILE, { speed: 5.0, floatAmplitude: 30, floatSpeed: 0.08 }),
-        // new FlyEnemy(101 * TILE, 5 * TILE, map, TILE, { speed: 5.5, floatAmplitude: 30, floatSpeed: 0.09 }),
+        new JumperEnemy(81 * TILE, 9 * TILE, map, TILE, { jumpForce: -17, jumpInterval: 40 }),
+        new JumperEnemy(107 * TILE, 9 * TILE, map, TILE, { jumpForce: -17, jumpInterval: 40 }),
+        new FlyEnemy(92 * TILE, 5 * TILE, map, TILE, { speed: 5.0, floatAmplitude: 30, floatSpeed: 0.08 }),
+        new FlyEnemy(101 * TILE, 5 * TILE, map, TILE, { speed: 5.5, floatAmplitude: 30, floatSpeed: 0.09 }),
 
         // * ── Zone 5: Underground Tunnel — low jumpers in each cell ──
-        // new JumperEnemy(115 * TILE, 8 * TILE, map, TILE, { jumpForce: -16, jumpInterval: 30 }),
-        // new JumperEnemy(122 * TILE, 8 * TILE, map, TILE, { jumpForce: -17, jumpInterval: 28 }),
-        // new JumperEnemy(129 * TILE, 8 * TILE, map, TILE, { jumpForce: -15, jumpInterval: 25 }),
+        new JumperEnemy(115 * TILE, 8 * TILE, map, TILE, { jumpForce: -16, jumpInterval: 30 }),
+        new JumperEnemy(122 * TILE, 8 * TILE, map, TILE, { jumpForce: -17, jumpInterval: 28 }),
+        new JumperEnemy(129 * TILE, 8 * TILE, map, TILE, { jumpForce: -15, jumpInterval: 25 }),
 
         // * ── Zone 6: Final Eruption ────────────────────────────────
-        // new FlyEnemy(141 * TILE, 5 * TILE, map, TILE, { speed: 5.5, floatAmplitude: 22, floatSpeed: 0.09 }),
-        // new WalkerEnemy(135 * TILE, 9 * TILE, map, TILE, { speed: 5.0, dir: -1 }),
-        // new PatrolEnemy(135 * TILE, 9, map, TILE, { speed: 7.0, patrolLeft: 111 * TILE, patrolRight: 135 * TILE }),
-        // new PatrolEnemy(145 * TILE, groundY, map, TILE, { speed: 7.0, patrolLeft: 138 * TILE, patrolRight: 149 * TILE }),
+        new FlyEnemy(141 * TILE, 5 * TILE, map, TILE, { speed: 5.5, floatAmplitude: 22, floatSpeed: 0.09 }),
+        new WalkerEnemy(135 * TILE, 9 * TILE, map, TILE, { speed: 5.0, dir: -1 }),
+        new PatrolEnemy(135 * TILE, 9, map, TILE, { speed: 7.0, patrolLeft: 111 * TILE, patrolRight: 135 * TILE }),
+        new PatrolEnemy(145 * TILE, groundY, map, TILE, { speed: 7.0, patrolLeft: 138 * TILE, patrolRight: 149 * TILE }),
     ];
 
     return { coins, boxes, stars, enemies };
