@@ -48,7 +48,7 @@ export class Player {
         this.jumpWasDown = false;
 
         const groundRow = map.length - 1;
-        this.x = 300;
+        this.x = 270;
         this.y = groundRow * tileSize - this.height;
 
         this.facing = 1;
