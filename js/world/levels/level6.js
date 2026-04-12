@@ -55,12 +55,6 @@ export function createMap() {
     // Left bank decoration
     map[12][25] = 6;                      // cactus on bank
 
-    // Two stone islands (barely reachable without bridge)
-    map[12][33] = 1; map[12][34] = 1;
-    map[13][33] = 15;                     // spike under island 1
-    map[12][44] = 1; map[12][45] = 1;
-    map[13][44] = 15;                     // spike under island 2
-
     // Raised platform over water — reward for going high
     for (let x = 37; x <= 40; x++) map[8][x] = 1;
     map[9][37] = 15; map[9][40] = 15;   // spike on platform ends

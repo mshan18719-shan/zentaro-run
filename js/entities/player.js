@@ -8,7 +8,7 @@ import { isKeyDown } from "../core/input.js";
 import { isSolid, isHazard } from "../world/map.js";
 
 const SPRITE_W = 90;
-const SPRITE_H = 150;
+const SPRITE_H = 164;
 const MAX_AIR_JUMPS = 1;
 const RUN_ANIM_SPEED = 7;
 const IDLE_ANIM_SPEED = 50;
@@ -37,7 +37,7 @@ export class Player {
         this.tileSize = tileSize;
 
         this.width = 75;
-        this.height = 140;
+        this.height = 150;
         this.speed = 5;
         this.velX = 0;
         this.velY = 0;
@@ -48,7 +48,7 @@ export class Player {
         this.jumpWasDown = false;
 
         const groundRow = map.length - 1;
-        this.x = 100;
+        this.x = 180;
         this.y = groundRow * tileSize - this.height;
 
         this.facing = 1;
