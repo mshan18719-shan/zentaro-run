@@ -30,7 +30,7 @@ export function createMap() {
 
     // * Low ceiling forces player to run along bottom, can't jump high
     for (let x = 0; x <= 18; x++) map[5][x] = 1;
-    // for (let x = 1; x <= 17; x++) map[6][x] = 15; // spike ceiling
+    for (let x = 1; x <= 17; x++) map[6][x] = 15; // spike ceiling
 
     // * Right wall sealing zone 1
     map[10][21] = 1;
