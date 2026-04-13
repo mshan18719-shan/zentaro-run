@@ -105,6 +105,7 @@ export function createMap() {
     // Exit shelf
     for (let x = 106; x <= 110; x++) map[11][x] = 1;
     map[11][111] = 8; map[10][111] = 8;
+    for (let x = 107; x <= 111; x++) map[12][x] = 15;
 
     // * ZONE 5 — Underground Tunnel  (cols 111–135)
 
@@ -140,27 +141,28 @@ export function createMap() {
 
     // * Mashrooms
     map[3][66] = 10; map[7][70] = 11;
+     map[9][58] = 11; map[5][62] = 10;
     map[7][124] = 10; map[7][125] = 10;
     map[7][132] = 11; map[7][133] = 11;
 
     // * Cactus decorations
     map[12][19] = 6; map[12][75] = 6;
-    map[3][4] = 7;
+    map[3][4] = 7; map[11][148] = 7;
 
     // * Rocks
-    map[13][3] = 9; map[12][57] = 9; map[9][57] = 9; map[5][62] = 9;
-    map[7][113] = 9; map[7][121] = 9;
+    map[13][3] = 9; map[12][57] = 9;
+    map[7][121] = 9;
     map[8][84] = 9;
 
     // * Crystals
     map[12][12] = 13; map[8][2] = 13; map[8][8] = 13;  map[8][14] = 13;  map[2][18] = 13; 
-     map[4][35] = 13; map[4][46] = 13; map[2][76] = 13; map[2][77] = 13;
+     map[4][35] = 13; map[4][46] = 13; map[2][76] = 13; map[2][77] = 13; map[9][109] = 13;
     map[8][82] = 13; map[12][144] = 13;
 
     // * Grass
-    map[12][1] = 16; map[12][38] = 16; map[12][43] = 16;  map[12][51] = 16;  
-    map[12][66] = 16; map[12][67] = 16;  map[12][73] = 16;
-    map[12][140] = 16;
+    map[12][1] = 16; map[12][38] = 16; map[12][43] = 16; map[12][51] = 16;  
+    map[12][66] = 16; map[12][67] = 16;  map[12][73] = 16; map[12][58] = 16;
+    map[7][113] = 16; map[12][140] = 16;
 
     // ! Door (high up — col 147, rows 2–3)
     map[2][145] = 24;
@@ -170,9 +172,6 @@ export function createMap() {
     return map;
 }
 
-// ══════════════════════════════════════════════════════════════
-//  ENTITIES
-// ══════════════════════════════════════════════════════════════
 export function createLevelEntities(map, TILE, player) {
 
     const coinDefs = [
@@ -237,7 +236,6 @@ export function createLevelEntities(map, TILE, player) {
 
     const groundY = (map.length - 1) * TILE;
     const enemies = [
-
         // * ── Zone 1: Sky Start ─────────────────────────────────────
         new FlyEnemy(6 * TILE, 3 * TILE, map, TILE, { speed: 3.5, floatAmplitude: 18, floatSpeed: 0.06 }),
         new FlyEnemy(14 * TILE, 6 * TILE, map, TILE, { speed: 3.5, floatAmplitude: 18, floatSpeed: 0.06 }),
